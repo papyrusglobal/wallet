@@ -15,15 +15,8 @@ yarn run serve
 yarn run build
 ```
 
-### Run your tests
+### Docker
 ```
-yarn run test
+docker build . -t wallet
+docker run -d -p --name=papyrus-wallet 8080:80 wallet
 ```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
