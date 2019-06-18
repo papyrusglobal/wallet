@@ -3,8 +3,7 @@ import App from './App.vue';
 import router from './router';
 import createStore from './store';
 import './styles/main.scss';
-
-import Web3Service from './plugins/web3Service';
+// import Web3Service from './plugins/web3Service';
 
 Vue.config.productionTip = false;
 
@@ -21,6 +20,9 @@ async function startApp() {
   }).$mount('#app');
 
   if (hasMetamask) {
+    const Web3Service = (await import(
+      /* webpackChunkName: "web3" */ './plugins/web3Service'
+    )).default;
     Vue.use(Web3Service, { store });
     store.dispatch('initApp');
   }
