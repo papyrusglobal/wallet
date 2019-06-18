@@ -34,7 +34,7 @@
           full-width
           type="number"
           min="0"
-          :max="stake"
+          :max="action === 'unstake' ? stake : null"
           class="Staking__input"
           :error="amountHasError"
           :disabled="staking"
