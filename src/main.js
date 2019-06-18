@@ -3,7 +3,6 @@ import App from './App.vue';
 import router from './router';
 import createStore from './store';
 import './styles/main.scss';
-// import Web3Service from './plugins/web3Service';
 
 Vue.config.productionTip = false;
 
