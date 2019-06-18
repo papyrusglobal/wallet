@@ -18,6 +18,12 @@ export default new Router({
       name: 'voting',
       component: () =>
         import(/* webpackChunkName: "voting" */ './views/Voting.vue')
+    },
+    {
+      path: '*',
+      name: 'err',
+      component: () =>
+        import(/* webpackChunkName: "voting" */ './views/NotFound.vue')
     }
   ]
 });

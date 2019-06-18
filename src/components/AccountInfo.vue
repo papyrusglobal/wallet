@@ -4,7 +4,7 @@
     <h2 class="AccountInfo__account" :title="account">{{ account }}</h2>
     <span class="AccountInfo__balance" @click="showEth = !showEth">
       <template v-if="showEth">
-        ~ {{ balance | toEther | formatPrice }} ETH
+        ~{{ balance | toEther | formatPrice }} ETH
       </template>
       <template v-else>
         {{ balance }} wei
@@ -64,11 +64,12 @@ export default {
 
   &__balance {
     display: inline-flex;
-    padding: 2px 8px 0px;
+    padding: 2px 12px 0px;
     margin-top: 8px;
-    background-color: var(--main-bg);
     border-radius: 20px;
     cursor: pointer;
+    transition: background-color 0.15s;
+
     &:hover {
       background-color: var(--blue-bg);
     }

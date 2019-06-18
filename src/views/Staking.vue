@@ -143,6 +143,7 @@ export default {
       background-color: var(--white);
       border: 1px solid var(--blue-bg);
       cursor: pointer;
+      transition: background-color 0.15s;
 
       &:hover {
         background-color: var(--blue-bg);
