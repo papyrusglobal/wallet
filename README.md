@@ -17,6 +17,5 @@ yarn run build
 
 ### Docker
 ```
-docker build . -t wallet
-docker run -d -p --name=papyrus-wallet 8080:80 wallet
+docker-compose up
 ```
