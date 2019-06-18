@@ -1,0 +1,62 @@
+@import 'https://fonts.googleapis.com/css?family=Lekton:400,700&display=swap&subset=latin-ext';
+
+$font-family: 'Lekton', Helvetica, sans-serif;
+
+:root {
+  --blue: #0500f4;
+  --orange: #ff7800;
+  --green: #33c50f;
+  --red: #ff0808;
+  --grey: #9dafbd;
+  --white: #fff;
+  --black: #192024;
+  --light-blue: #3898ec;
+
+  --main-bg: #edeff2;
+  --blue-bg: #f0f0ff;
+  --red-bg: rgba(255, 8, 8, 0.1);
+  --green-bg: rgba(51, 197, 15, 0.1);
+  --dark-blue-bg: #020050;
+
+  --card: #fff;
+  --card-separator: rgba(51, 51, 51, 0.1);
+
+  --input-border: #ccc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: $font-family;
+  font-size: 16px;
+  line-height: 150%;
+  background-color: var(--main-bg);
+  color: var(--black);
+}
+
+button,
+input,
+select,
+textarea {
+  color: var(--black);
+  font-family: $font-family;
+  font-size: 1rem;
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--blue);
+    text-decoration: underline;
+  }
+}
