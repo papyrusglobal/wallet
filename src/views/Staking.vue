@@ -34,7 +34,7 @@
           full-width
           type="number"
           min="0"
-          :max="action === 'unstake' ? stake : null"
+          :max="isUnstakeAction ? stake : null"
           class="Staking__input"
           :error="amountHasError"
           :disabled="staking"
@@ -95,8 +95,11 @@ export default {
     };
   },
   computed: {
+    isUnstakeAction() {
+      return this.action === 'unstake';
+    },
     amountHasError() {
-      return this.action === 'unstake' && this.amount > this.stake;
+      return this.isUnstakeAction && this.amount > Number(this.stake);
     },
     ...mapState(['account', 'stake'])
   },
