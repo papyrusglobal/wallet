@@ -1,5 +1,3 @@
-import { PAPYRUS_NETWORK_ID } from '@/constants';
-
 export const state = () => ({
   initializing: true,
   connectedNetwork: false,
@@ -11,7 +9,8 @@ export const state = () => ({
 });
 
 export const getters = {
-  hasPapyrusNetwork: state => state.connectedNetwork === PAPYRUS_NETWORK_ID,
+  hasPapyrusNetwork: state =>
+    state.connectedNetwork === Number(process.env.VUE_APP_PAPYRUS_NETWORK_ID),
   metamaskIsConnected: state => !!state.account
 };
 

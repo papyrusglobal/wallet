@@ -1,5 +1,4 @@
 import Web3 from 'web3';
-import { BIOS_ADDRESS } from '@/constants';
 import abi from '@/abis/abi.json';
 
 const noop = () => {};
@@ -12,7 +11,10 @@ export class Web3Service {
   constructor(provider) {
     this.provider = provider;
     this.web3 = new Web3(provider);
-    this.contract = new this.web3.eth.Contract(abi, BIOS_ADDRESS);
+    this.contract = new this.web3.eth.Contract(
+      abi,
+      process.env.VUE_APP_BIOS_ADDRESS
+    );
   }
 
   async getLimit(account) {
@@ -54,7 +56,7 @@ export class Web3Service {
   }
 
   async getAllStakes() {
-    return this.getBalance(BIOS_ADDRESS);
+    return this.getBalance(process.env.VUE_APP_BIOS_ADDRESS);
   }
 
   async stake(account, value, callbacks = {}) {
