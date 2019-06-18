@@ -1,7 +1,7 @@
 <template functional>
   <div class="MetamaskError">
     <img
-      src="@/assets/images/metamask-logo.svg"
+      src="/metamask-logo.svg"
       alt="Metamask"
       title="Metamask"
       width="104"
