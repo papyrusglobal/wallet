@@ -15,6 +15,5 @@ export default {
 <style lang="scss" scoped>
 .Header {
   text-align: center;
-  padding: 40px 0 0;
 }
 </style>
