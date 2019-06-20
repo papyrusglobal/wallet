@@ -1,13 +1,12 @@
 # Papyrus Wallet
 
-## Project setup
+### Build docker "hard-way"
 ```
-yarn install
+docker-compose up
 ```
-
-### Compiles and hot-reloads for development
+#### Lazy-way
 ```
-yarn run serve
+docker build https://github.com/papyrusglobal/wallet.git -t wallet && docker run -p 8380:80 -d wallet
 ```
 
 ### Setup environment
@@ -21,12 +20,8 @@ cat .env > .env.local
 ```
 and change it
 
-### Compiles and minifies for production
+### Development
 ```
-yarn run build
-```
-
-### Docker
-```
-docker-compose up
+yarn install
+yarn run dev
 ```
