@@ -2,28 +2,109 @@
   <Card class="Voting">
     <AccountInfo />
     <CardSeparator />
-    <h1 style="margin: 0; padding: 50px 0;">
-      Let's vote bitch!
-    </h1>
+    <form @submit.prevent="submit">
+      <Select
+        v-model="action"
+        :options="$options.choices"
+        :disabled="submitting"
+        full-width
+        as-object
+        class="mb-5"
+      />
+      <Input
+        v-model.number="amount"
+        :disabled="submitting"
+        type="number"
+        full-width
+        class="mb-4"
+        placeholder="How many votes you want to use"
+      />
+      <Input full-width type="text" readonly :value="account" class="mb-5" />
+      <Button
+        full-width
+        class="Voting__button"
+        :loading="submitting"
+        :disabled="!amount"
+      >
+        {{ action.type || 'Submit' }}
+      </Button>
+    </form>
   </Card>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Card from '@/components/Card';
 import CardSeparator from '@/components/CardSeparator';
 import AccountInfo from '@/components/AccountInfo';
+import Input from '@/components/Input';
+import Select from '@/components/Select';
+import Button from '@/components/Button';
+
+const choices = [
+  {
+    title: 'Propose a poll for a new authority',
+    value: 'proposeNewAuthority',
+    type: 'propose'
+  },
+  {
+    title: 'Vote for the new authority',
+    value: 'voteForNewAuthority',
+    type: 'vote'
+  },
+  {
+    title:
+      'Propose a poll for blacklisting the authority to the authority black list',
+    value: 'proposeBlacklistAuthority',
+    type: 'propose'
+  },
+  {
+    title: 'Vote for adding the participant into authority black list',
+    value: 'voteForBlackListAuthority',
+    type: 'vote'
+  },
+  {
+    title: 'Propose a poll for changing BIOS contract',
+    disabled: true
+  },
+  {
+    title: 'Vote for changing BIOS contract',
+    disabled: true
+  }
+];
 
 export default {
-  name: 'Voiting',
-  components: { AccountInfo, Card, CardSeparator }
+  name: 'Voting',
+  components: { Button, Select, Input, AccountInfo, Card, CardSeparator },
+  data() {
+    let actionIndex = this.$route.query.action;
+    actionIndex = parseInt(actionIndex);
+    actionIndex =
+      !isNaN(actionIndex) && actionIndex <= choices.length ? actionIndex : 0;
+    return {
+      submitting: false,
+      action:
+        choices[actionIndex] && !choices[actionIndex].disabled
+          ? choices[actionIndex]
+          : choices[0],
+      amount: null
+    };
+  },
+  computed: {
+    ...mapState(['account'])
+  },
+  methods: {
+    submit() {
+      this.submitting = true;
+      setTimeout(() => {
+        this.submitting = false;
+      }, 3000);
+    }
+  },
+  choices
 };
 </script>
 
-<style lang="scss" scoped>
-.Voting {
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-}
-</style>
+<!--<style lang="scss" scoped>-->
+<!--.Voting {}-->
+<!--</style>-->

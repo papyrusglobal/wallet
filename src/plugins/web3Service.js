@@ -80,6 +80,12 @@ export class Web3Service {
     );
   }
 
+  async getFreezedStakes(account) {
+    return this.contract.methods
+      .getMeltingHead()
+      .send({ from: account, gas: 0 });
+  }
+
   async process(
     transaction,
     { onConfirmation = noop, onReceipt = noop, onError = noop }

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import fullWidthMixin from './mixins/fullWidthMixin';
+import { fullWidthMixin } from '@/components/mixins';
 import Spinner from '@/components/Spinner';
 
 export default {
@@ -46,6 +46,9 @@ export default {
         binding.is = 'router-link';
         binding.to = this.to;
         delete binding.href;
+      }
+      if (this.loading) {
+        binding.disabled = true;
       }
       return binding;
     },
@@ -94,7 +97,7 @@ export default {
     box-shadow: 0 4px 14px -4px var(--blue);
   }
 
-  &:disabled {
+  &:not(.--loading):disabled {
     opacity: 0.34;
   }
 

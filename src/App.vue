@@ -24,10 +24,10 @@
         >Retry</Button
       >
     </MetamaskError>
-    <template v-else>
-      <Navigation />
+    <SuperContainer v-else>
+      <Navigation class="mt-6" />
       <router-view />
-    </template>
+    </SuperContainer>
   </div>
 </template>
 
@@ -38,9 +38,17 @@ import MetamaskError from '@/components/MetamaskError';
 import Button from '@/components/Button';
 import Spinner from '@/components/Spinner';
 import Navigation from '@/components/Navigation';
+import SuperContainer from '@/components/SuperContainer';
 
 export default {
-  components: { Navigation, Spinner, Button, MetamaskError, Header },
+  components: {
+    SuperContainer,
+    Navigation,
+    Spinner,
+    Button,
+    MetamaskError,
+    Header
+  },
   props: {
     hasMetamask: {
       type: Boolean,
@@ -69,5 +77,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss"></style>

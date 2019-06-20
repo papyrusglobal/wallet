@@ -7,7 +7,7 @@
       <AccountInfo />
       <CardSeparator />
       <form @submit.prevent="submit">
-        <div class="Staking__switcher">
+        <div class="Staking__switcher mb-5">
           <div class="Staking__switcher-item">
             <input
               v-model="action"
@@ -35,21 +35,14 @@
           type="number"
           min="0"
           :max="isUnstakeAction ? stake : null"
-          class="Staking__input"
+          class="mb-4"
           :error="amountHasError"
           :disabled="staking"
           :placeholder="`How many wei you want to ${action}`"
         />
-        <Input
-          full-width
-          type="text"
-          readonly
-          :value="account"
-          class="Staking__input"
-        />
+        <Input full-width type="text" readonly :value="account" class="mb-5" />
         <Button
           full-width
-          class="Staking__button"
           :disabled="!amount || amountHasError"
           :loading="staking"
         >
@@ -94,6 +87,10 @@ export default {
       amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null
     };
   },
+  // async mounted() {
+  //   const res = await this.$service.getFreezedStakes(this.account);
+  //   console.log(res);
+  // },
   computed: {
     isUnstakeAction() {
       return this.action === 'unstake';
@@ -127,13 +124,7 @@ export default {
 
 <style lang="scss" scoped>
 .Staking {
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-
   &__switcher {
-    margin-bottom: 16px;
     display: flex;
 
     &-item {
@@ -162,14 +153,6 @@ export default {
         background-color: var(--blue-bg);
       }
     }
-  }
-
-  &__input {
-    margin: 8px 0;
-  }
-
-  &__button {
-    margin-top: 16px;
   }
 }
 </style>
