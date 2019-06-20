@@ -27,7 +27,9 @@
     <SuperContainer v-else class="mt-6">
       <Card>
         <Navigation class="mb-6" />
-        <AccountInfo />
+        <keep-alive>
+          <AccountInfo v-if="this.$route.name !== 'err'" />
+        </keep-alive>
         <router-view />
       </Card>
     </SuperContainer>
