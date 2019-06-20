@@ -1,32 +1,32 @@
 # Papyrus Wallet
+Easy stake and unstake!
 
-## Project setup
+### Docker
+#### Lazy
 ```
-yarn install
+docker build https://github.com/papyrusglobal/wallet.git -t wallet:latest && docker run --name=papyrus-wallet -p 8380:80 -d wallet:latest
+```
+#### Harder
+```
+git clone https://github.com/papyrusglobal/wallet.git 
+docker-compose up
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Setup environment
+### Setup environment (optional)
+In case you want change BIOS_ADDRESS (should not be constant in future) and PAPYRUS_NETWORK_ID.
 ```
 echo 'VUE_APP_PAPYRUS_NETWORK_ID={id}' >> .env.local
 echo 'VUE_APP_BIOS_ADDRESS={address}' >> .env.local
 ```
 or
 ```
-cat .env > .env.local
-```
-and change it
-
-### Compiles and minifies for production
-```
-yarn run build
+cp .env > .env.local
+vim .env.local
 ```
 
-### Docker
+### Development (very optional)
 ```
-docker-compose up
+git clone https://github.com/papyrusglobal/wallet.git 
+yarn install
+yarn run serve
 ```
