@@ -4,7 +4,7 @@ Easy stake and unstake!
 ### Docker
 #### Lazy
 ```
-docker build https://github.com/papyrusglobal/wallet.git -t wallet && docker run -p 8380:80 -d wallet
+docker build https://github.com/papyrusglobal/wallet.git -t wallet && docker run -d --name=papyrus-wallet -p 8380:80 -d wallet
 ```
 #### Harder
 ```
