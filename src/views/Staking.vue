@@ -1,88 +1,75 @@
 <template>
   <div class="Staking">
-    <Toast :show="hash !== null">
-      Transaction #{{ hash }} is being sent to the network
-    </Toast>
-    <Card>
-      <AccountInfo />
-      <CardSeparator />
-      <form @submit.prevent="submit">
-        <div class="Staking__switcher mb-5">
-          <div class="Staking__switcher-item">
-            <input
-              v-model="action"
-              type="radio"
-              name="action"
-              id="stake"
-              value="stake"
-            />
-            <label for="stake">Stake</label>
-          </div>
-          <div class="Staking__switcher-item">
-            <input
-              v-model="action"
-              type="radio"
-              name="action"
-              id="unstake"
-              value="unstake"
-            />
-            <label for="unstake">Unstake</label>
-          </div>
+    <CardSeparator />
+    <form @submit.prevent="submit">
+      <div class="Staking__switcher mb-5">
+        <div class="Staking__switcher-item">
+          <input
+            v-model="action"
+            type="radio"
+            name="action"
+            id="stake"
+            value="stake"
+          />
+          <label for="stake">Stake</label>
         </div>
-        <Input
-          v-model.number="amount"
-          full-width
-          type="number"
-          min="0"
-          :max="isUnstakeAction ? stake : null"
-          class="mb-4"
-          :error="amountHasError"
-          :disabled="staking"
-          :placeholder="`How many wei you want to ${action}`"
-        />
-        <Input full-width type="text" readonly :value="account" class="mb-5" />
-        <Button
-          full-width
-          :disabled="!amount || amountHasError"
-          :loading="staking"
-        >
-          {{ action }}
-        </Button>
-      </form>
-      <div>
-        <CardSeparator />
-        <FreezedStakes />
+        <div class="Staking__switcher-item">
+          <input
+            v-model="action"
+            type="radio"
+            name="action"
+            id="unstake"
+            value="unstake"
+          />
+          <label for="unstake">Unstake</label>
+        </div>
       </div>
-    </Card>
+      <Input
+        v-model.number="amount"
+        full-width
+        type="number"
+        min="0"
+        :max="isUnstakeAction ? stake : null"
+        class="mb-4"
+        :error="amountHasError"
+        :disabled="staking"
+        :placeholder="`How many wei you want to ${action}`"
+      />
+      <Input full-width type="text" readonly :value="account" class="mb-5" />
+      <Button
+        full-width
+        :disabled="!amount || amountHasError"
+        :loading="staking"
+      >
+        {{ action }}
+      </Button>
+    </form>
+    <div>
+      <CardSeparator />
+      <FreezedStakes />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Card from '@/components/Card';
 import CardSeparator from '@/components/CardSeparator';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
-import Toast from '@/components/Toast';
-import AccountInfo from '@/components/AccountInfo';
 import FreezedStakes from '@/components/FreezedStakes';
 
 export default {
   name: 'Staking',
   components: {
     FreezedStakes,
-    AccountInfo,
-    Toast,
     Button,
     CardSeparator,
-    Card,
     Input
   },
   data() {
     const { action, amount } = this.$route.query;
     return {
       staking: false,
-      hash: null,
       action: ['stake', 'unstake'].includes(action) ? action : 'stake',
       amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null
     };
@@ -105,18 +92,13 @@ export default {
       this.staking = true;
       try {
         const hash = await this.$store.dispatch(this.action, this.amount);
-        this.showToast(hash);
+        this.$toast.info(`Transaction #${hash} is being sent to the network`);
         this.amount = null;
       } catch (err) {
-        //
+        this.$toast.error('Something went wrong!');
       } finally {
         this.staking = false;
       }
-    },
-    showToast(hash) {
-      clearTimeout(this.toastTimeout);
-      this.hash = hash;
-      this.toastTimeout = setTimeout(() => (this.hash = null), 5000);
     }
   }
 };
@@ -140,7 +122,7 @@ export default {
       transition: background-color 0.15s;
 
       &:hover {
-        background-color: var(--blue-bg);
+        color: var(--blue);
       }
     }
 

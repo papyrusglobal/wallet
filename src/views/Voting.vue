@@ -1,6 +1,5 @@
 <template>
-  <Card class="Voting">
-    <AccountInfo />
+  <div class="Voting">
     <CardSeparator />
     <form @submit.prevent="submit">
       <Select
@@ -29,14 +28,12 @@
         {{ action.type || 'Submit' }}
       </Button>
     </form>
-  </Card>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import Card from '@/components/Card';
 import CardSeparator from '@/components/CardSeparator';
-import AccountInfo from '@/components/AccountInfo';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
 import Button from '@/components/Button';
@@ -75,7 +72,7 @@ const choices = [
 
 export default {
   name: 'Voting',
-  components: { Button, Select, Input, AccountInfo, Card, CardSeparator },
+  components: { Button, Select, Input, CardSeparator },
   data() {
     let actionIndex = this.$route.query.action;
     actionIndex = parseInt(actionIndex);
@@ -97,6 +94,11 @@ export default {
     submit() {
       this.submitting = true;
       setTimeout(() => {
+        this.amount = null;
+        this.$toast.success(
+          'Successfully submit something to something. Good job!'
+        );
+        this.$toast.info('Also we should clean form.');
         this.submitting = false;
       }, 3000);
     }

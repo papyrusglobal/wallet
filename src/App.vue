@@ -24,9 +24,12 @@
         >Retry</Button
       >
     </MetamaskError>
-    <SuperContainer v-else>
-      <Navigation class="mt-6" />
-      <router-view />
+    <SuperContainer v-else class="mt-6">
+      <Card>
+        <Navigation class="mb-6" />
+        <AccountInfo />
+        <router-view />
+      </Card>
     </SuperContainer>
   </div>
 </template>
@@ -39,9 +42,13 @@ import Button from '@/components/Button';
 import Spinner from '@/components/Spinner';
 import Navigation from '@/components/Navigation';
 import SuperContainer from '@/components/SuperContainer';
+import Card from '@/components/Card';
+import AccountInfo from '@/components/AccountInfo';
 
 export default {
   components: {
+    AccountInfo,
+    Card,
     SuperContainer,
     Navigation,
     Spinner,

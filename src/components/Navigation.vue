@@ -16,6 +16,12 @@
 <script>
 export default {
   name: 'Navigation',
+  props: {
+    inCard: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     scrollToTop() {
       if (
@@ -33,9 +39,8 @@ export default {
 <style lang="scss" scoped>
 .Navigation {
   display: flex;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
+  margin: -40px;
+  margin-bottom: 0;
   list-style-type: none;
   text-align: center;
   background-color: var(--white);
@@ -61,8 +66,10 @@ export default {
         content: '';
         position: absolute;
         left: 0;
+        border-bottom: 0px solid var(--blue);
         bottom: -1px;
         width: 100%;
+        transition: border 0.2s;
       }
 
       &.router-link-active,
