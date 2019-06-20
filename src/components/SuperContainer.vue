@@ -1,5 +1,5 @@
-<template functional>
-  <div class="SuperContainer" v-bind="data.$attrs" :class="data.staticClass">
+<template>
+  <div class="SuperContainer" v-bind="$attrs">
     <slot />
   </div>
 </template>

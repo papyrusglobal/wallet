@@ -1,3 +1,5 @@
+let timer;
+
 export const state = () => ({
   initializing: true,
   connectedNetwork: false,
@@ -32,13 +34,24 @@ export const actions = {
   async initApp({ commit, getters, dispatch }) {
     const account = await this.$service.getAccount();
     commit('setState', ['account', account]);
-    commit('setState', ['metamaskIsConnected', true]);
     const networkId = await this.$service.getNetworkId();
     commit('setState', ['connectedNetwork', networkId]);
     if (account && getters['hasPapyrusNetwork']) {
       dispatch('loadAccountData');
     }
     commit('setState', ['initializing', false]);
+    // Check every 2 seconds that we still connected to Metamask
+    dispatch('checkMetamaskConnection');
+  },
+
+  async checkMetamaskConnection({ state, dispatch }) {
+    clearTimeout(timer);
+    const account = await this.$service.getAccount();
+    if (state.account !== account) {
+      dispatch('initApp');
+    } else {
+      timer = setTimeout(() => dispatch('checkMetamaskConnection'), 2000);
+    }
   },
 
   async loadAccountData({ state, commit }, account) {
