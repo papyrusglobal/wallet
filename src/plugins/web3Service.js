@@ -22,6 +22,17 @@ export class Web3Service {
     );
   }
 
+  async askPermission() {
+    const { provider } = this;
+    if (!provider) return;
+    if ('enable' in provider && typeof provider.enable === 'function') {
+      provider.enable().catch(() => {
+        // do nothing
+      });
+    }
+    return;
+  }
+
   async getLimit(account) {
     return new Promise((resolve, reject) => {
       this.provider.sendAsync(
@@ -115,7 +126,7 @@ export class Web3Service {
 }
 
 export default {
-  install(Vue, { store, provider = window.web3.currentProvider }) {
+  install(Vue, { store, provider }) {
     const service = new Web3Service(provider);
     Object.defineProperty(Vue.prototype, '$service', {
       get() {

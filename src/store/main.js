@@ -41,8 +41,23 @@ export const mutations = {
 };
 
 export const actions = {
-  async initApp({ commit, getters, dispatch }) {
+  async initApp({ dispatch }) {
+    await dispatch('loadInitialData');
+    this.$service.askPermission();
+  },
+
+  async checkMetamaskConnection({ state, dispatch }) {
+    clearTimeout(timer);
     const account = await this.$service.getAccount();
+    if (state.account !== account) {
+      dispatch('loadInitialData', account);
+    } else {
+      timer = setTimeout(() => dispatch('checkMetamaskConnection'), 2000);
+    }
+  },
+
+  async loadInitialData({ commit, dispatch }, account) {
+    account = account || await this.$service.getAccount();
     commit('setState', ['account', account]);
     const networkId = await this.$service.getNetworkId();
     commit('setState', ['connectedNetwork', networkId]);
@@ -52,16 +67,7 @@ export const actions = {
     commit('setState', ['initializing', false]);
     // Check every 2 seconds check connection to Metamask
     dispatch('checkMetamaskConnection');
-  },
-
-  async checkMetamaskConnection({ state, dispatch }) {
-    clearTimeout(timer);
-    const account = await this.$service.getAccount();
-    if (state.account !== account) {
-      dispatch('initApp');
-    } else {
-      timer = setTimeout(() => dispatch('checkMetamaskConnection'), 2000);
-    }
+    return true;
   },
 
   async loadAccountData({ state, commit }, account) {
