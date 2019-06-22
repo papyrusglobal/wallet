@@ -2,6 +2,11 @@ import Web3 from 'web3';
 import abi from '@/abis/abi.json';
 
 const noop = () => {};
+const cbCaller = function(fn, ...args) {
+  if (fn && typeof fn === 'function') {
+    fn(...args);
+  }
+};
 
 export class Web3Service {
   web3 = null;
@@ -83,18 +88,13 @@ export class Web3Service {
   async getFreezedStakes(account) {
     return this.contract.methods
       .getMeltingHead()
-      .send({ from: account, gas: 0 });
+      .call({ from: account, gas: 0 });
   }
 
   async process(
     transaction,
     { onConfirmation = noop, onReceipt = noop, onError = noop }
   ) {
-    const cbCaller = function(fn, ...args) {
-      if (fn && typeof fn === 'function') {
-        fn(...args);
-      }
-    };
     return new Promise((resolve, reject) => {
       transaction
         .once('transactionHash', hash => {

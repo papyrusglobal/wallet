@@ -44,15 +44,15 @@
         {{ action }}
       </Button>
     </form>
-    <div>
+    <div v-if="hasFreezedStakes">
       <CardSeparator />
-      <FreezedStakes />
+      <FreezedStakes :stakes="freezedStakes" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import CardSeparator from '@/components/CardSeparator';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
@@ -74,10 +74,9 @@ export default {
       amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null
     };
   },
-  // async mounted() {
-  //   const res = await this.$service.getFreezedStakes(this.account);
-  //   console.log(res);
-  // },
+  mounted() {
+    this.$store.dispatch('loadFreezedStakes');
+  },
   computed: {
     isUnstakeAction() {
       return this.action === 'unstake';
@@ -85,7 +84,8 @@ export default {
     amountHasError() {
       return this.isUnstakeAction && this.amount > Number(this.stake);
     },
-    ...mapState(['account', 'stake'])
+    ...mapState(['account', 'stake', 'freezedStakes']),
+    ...mapGetters(['hasFreezedStakes'])
   },
   methods: {
     async submit() {

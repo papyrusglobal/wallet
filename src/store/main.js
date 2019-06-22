@@ -7,13 +7,20 @@ export const state = () => ({
   balance: 0,
   stake: 0,
   limit: 0,
-  allStakes: 0
+  allStakes: 0,
+  freezedStakes: [
+    // {
+    //   timestamp: 0,
+    //   stake: 0
+    // }
+  ]
 });
 
 export const getters = {
   hasPapyrusNetwork: state =>
     state.connectedNetwork === Number(process.env.VUE_APP_PAPYRUS_NETWORK_ID),
-  metamaskIsConnected: state => !!state.account
+  metamaskIsConnected: state => !!state.account,
+  hasFreezedStakes: state => state.freezedStakes.length > 0
 };
 
 export const mutations = {
@@ -27,6 +34,9 @@ export const mutations = {
     state.stake = stake;
     state.limit = limit;
     state.allStakes = allStakes;
+  },
+  setFreezedStakes(state, freezedStakes) {
+    state.freezedStakes = freezedStakes;
   }
 };
 
@@ -40,7 +50,7 @@ export const actions = {
       dispatch('loadAccountData');
     }
     commit('setState', ['initializing', false]);
-    // Check every 2 seconds that we still connected to Metamask
+    // Check every 2 seconds check connection to Metamask
     dispatch('checkMetamaskConnection');
   },
 
@@ -67,6 +77,18 @@ export const actions = {
     commit('setAccountData', { balance, stake, limit, allStakes });
   },
 
+  async loadFreezedStakes({ commit, state }) {
+    const { stake, timestamp } = await this.$service.getFreezedStakes(
+      state.account
+    );
+    const amount = stake.toString(10);
+    if (Number(amount) > 0) {
+      commit('setFreezedStakes', [{ amount, timestamp }]);
+    } else {
+      commit('setFreezedStakes', []);
+    }
+  },
+
   async stake({ state, dispatch }, amount) {
     return this.$service.stake(state.account, amount, {
       onReceipt: onReceipt(dispatch),
@@ -77,14 +99,20 @@ export const actions = {
   async unstake({ state, dispatch }, amount) {
     return this.$service.unstake(state.account, amount, {
       onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onConfirmation: () => {
+        onConfirmation(dispatch)();
+        dispatch('loadFreezedStakes');
+      }
     });
   },
 
   async withdraw({ state, dispatch }) {
     return this.$service.withdraw(state.account, {
       onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onConfirmation: () => {
+        onConfirmation(dispatch)();
+        dispatch('loadFreezedStakes');
+      }
     });
   }
 };
