@@ -36,7 +36,7 @@ export default {
   methods: {
     setNow() {
       this.now = Date.now();
-      this.timeout = setTimeout(this.setNow, 200);
+      this.timeout = setTimeout(this.setNow, 100);
     }
   }
 };
