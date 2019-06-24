@@ -12,6 +12,7 @@ export class Web3Service {
   web3 = null;
   contract = null;
   provider = null;
+  account = null;
 
   constructor(provider) {
     this.provider = provider;
@@ -30,7 +31,6 @@ export class Web3Service {
         // do nothing
       });
     }
-    return;
   }
 
   async getLimit(account) {
@@ -52,7 +52,8 @@ export class Web3Service {
   }
 
   async getAccount() {
-    return (await this.web3.eth.getAccounts())[0];
+    this.account = (await this.web3.eth.getAccounts())[0];
+    return this.account;
   }
 
   async getNetworkId() {
@@ -60,46 +61,106 @@ export class Web3Service {
   }
 
   async getBalance(account) {
-    return this.web3.eth.getBalance(account);
+    return this.web3.eth.getBalance(account || this.account);
   }
 
-  async getStake(account) {
-    return this.contract.methods.stakes(account).call({ from: account });
+  async getStake() {
+    return this.contract.methods
+      .stakes(this.account)
+      .call({ from: this.account });
   }
 
-  async getVersion(account) {
-    return this.contract.methods.version().call({ from: account });
+  async getVersion() {
+    return this.contract.methods.version().call({ from: this.account });
   }
 
   async getAllStakes() {
     return this.getBalance(process.env.VUE_APP_BIOS_ADDRESS);
   }
 
-  async stake(account, value, callbacks = {}) {
+  async stake(value, callbacks = {}) {
     return this.process(
-      this.contract.methods.freeze().send({ from: account, gas: 0, value }),
+      this.contract.methods
+        .freeze()
+        .send({ from: this.account, gas: 0, value }),
       callbacks
     );
   }
 
-  async unstake(account, value, callbacks = {}) {
+  async unstake(value, callbacks = {}) {
     return this.process(
-      this.contract.methods.melt(value).send({ from: account, gas: 0 }),
+      this.contract.methods.melt(value).send({ from: this.account, gas: 0 }),
       callbacks
     );
   }
 
-  async withdraw(account, callbacks = {}) {
+  async withdraw(callbacks = {}) {
     return this.process(
-      this.contract.methods.withdraw().send({ from: account, gas: 100000 }),
+      this.contract.methods
+        .withdraw()
+        .send({ from: this.account, gas: 100000 }),
       callbacks
     );
   }
 
-  async getFreezedStakes(account) {
+  async getFreezedStakes() {
     return this.contract.methods
       .getMeltingHead()
-      .call({ from: account, gas: 0 });
+      .call({ from: this.account, gas: 0 });
+  }
+
+  async addNewPollAddresses() {
+    return this.contract.methods.addNewPollAddresses(123).call({
+      from: this.account,
+      gas: 0
+    });
+  }
+
+  async authorityBlacklistPollAddresses() {
+    return this.contract.methods.authorityBlacklistPollAddresses(123).call({
+      from: this.account,
+      gas: 0
+    });
+  }
+
+  async proposeNewAuthority(address, callbacks = {}) {
+    return this.process(
+      this.contract.methods.proposeNewAuthority(address).send({
+        from: this.account,
+        gas: 100000
+      }),
+      callbacks
+    );
+  }
+
+  async proposeBlacklistAuthority(address, callbacks = {}) {
+    return this.process(
+      this.contract.methods.proposeBlacklistAuthority(address).send({
+        from: this.account,
+        gas: 100000
+      }),
+      callbacks
+    );
+  }
+
+  async voteForNewAuthority(votes, address, callbacks = {}) {
+    return this.process(
+      this.contract.methods.voteForNewAuthority(votes, address).send({
+        from: this.account,
+        gas: 100000
+      }),
+      callbacks
+    );
+  }
+
+  async voteForBlackListAuthority(address, callbacks = {}) {
+    return this.process(
+      this.contract.methods.voteForBlackListAuthority(address).send({
+        from: this.account,
+        gas: 100000
+      }),
+      callbacks
+    );
   }
 
   async process(

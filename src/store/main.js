@@ -57,7 +57,7 @@ export const actions = {
   },
 
   async loadInitialData({ commit, dispatch }, account) {
-    account = account || await this.$service.getAccount();
+    account = account || (await this.$service.getAccount());
     commit('setState', ['account', account]);
     const networkId = await this.$service.getNetworkId();
     commit('setState', ['connectedNetwork', networkId]);
@@ -83,10 +83,8 @@ export const actions = {
     commit('setAccountData', { balance, stake, limit, allStakes });
   },
 
-  async loadFreezedStakes({ commit, state }) {
-    const { stake, timestamp } = await this.$service.getFreezedStakes(
-      state.account
-    );
+  async loadFreezedStakes({ commit }) {
+    const { stake, timestamp } = await this.$service.getFreezedStakes();
     const amount = stake.toString(10);
     if (Number(amount) > 0) {
       commit('setFreezedStakes', [{ amount, timestamp }]);
@@ -95,15 +93,24 @@ export const actions = {
     }
   },
 
-  async stake({ state, dispatch }, amount) {
-    return this.$service.stake(state.account, amount, {
+  async loadPollAddresses() {
+    const [addresses, blacklistAddresses] = await Promise.all([
+      this.$service.addNewPollAddresses(),
+      this.$service.authorityBlacklistPollAddresses()
+    ]);
+    // eslint-disable-next-line
+    console.log(addresses, blacklistAddresses);
+  },
+
+  async stake({ dispatch }, amount) {
+    return this.$service.stake(amount, {
       onReceipt: onReceipt(dispatch),
       onConfirmation: onConfirmation(dispatch)
     });
   },
 
-  async unstake({ state, dispatch }, amount) {
-    return this.$service.unstake(state.account, amount, {
+  async unstake({ dispatch }, amount) {
+    return this.$service.unstake(amount, {
       onReceipt: onReceipt(dispatch),
       onConfirmation: () => {
         onConfirmation(dispatch)();
@@ -112,13 +119,41 @@ export const actions = {
     });
   },
 
-  async withdraw({ state, dispatch }) {
-    return this.$service.withdraw(state.account, {
+  async withdraw({ dispatch }) {
+    return this.$service.withdraw({
       onReceipt: onReceipt(dispatch),
       onConfirmation: () => {
         onConfirmation(dispatch)();
         dispatch('loadFreezedStakes');
       }
+    });
+  },
+
+  async proposeNewAuthority({ dispatch }, { address }) {
+    return this.$service.proposeNewAuthority(address, {
+      onReceipt: onReceipt(dispatch),
+      onConfirmation: onConfirmation(dispatch)
+    });
+  },
+
+  async voteForNewAuthority({ dispatch }, { address, votes }) {
+    return this.$service.voteForNewAuthority(votes, address, {
+      onReceipt: onReceipt(dispatch),
+      onConfirmation: onConfirmation(dispatch)
+    });
+  },
+
+  async proposeBlacklistAuthority({ dispatch }, { address }) {
+    return this.$service.proposeBlacklistAuthority(address, {
+      onReceipt: onReceipt(dispatch),
+      onConfirmation: onConfirmation(dispatch)
+    });
+  },
+
+  async voteForBlackListAuthority({ dispatch }, { address }) {
+    return this.$service.voteForBlackListAuthority(address, {
+      onReceipt: onReceipt(dispatch),
+      onConfirmation: onConfirmation(dispatch)
     });
   }
 };

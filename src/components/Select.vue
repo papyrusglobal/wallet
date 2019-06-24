@@ -12,7 +12,7 @@
         :selected="isSelected(option)"
         :key="option.title.split(' ').join('_')"
         :disabled="option.disabled"
-        :value="option.value"
+        :value="valueAttr ? option[valueAttr] : option.value"
       >
         {{ option.title }}
       </option>
@@ -33,6 +33,10 @@ export default {
       type: Array,
       default: null
     },
+    valueAttr: {
+      type: String,
+      default: null
+    },
     asObject: {
       type: Boolean,
       default: false
@@ -40,10 +44,13 @@ export default {
   },
   methods: {
     handleChange(event) {
+      const { valueAttr } = this;
       this.$emit(
         'changing',
         this.asObject && this.options
-          ? this.options.find(o => o.value === event.target.value)
+          ? this.options.find(
+              o => (valueAttr ? o[valueAttr] : o.value) === event.target.value
+            )
           : event.target.value
       );
     },
