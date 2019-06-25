@@ -63,7 +63,7 @@ export default {
       if (!this.currentSlot) return;
       const date = new Date(this.currentSlot.timestamp * 1000);
       const diff = new Date() - date;
-      if (diff < DAY) {
+      if (diff >= DAY) {
         return format(date, 'dd MMMM yyyy HH:mm');
       }
       return `${formatDistanceToNow(date)} ago`;
