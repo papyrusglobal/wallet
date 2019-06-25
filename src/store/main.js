@@ -1,3 +1,5 @@
+import { parseEnvVariable } from '@/utils/env';
+
 let timer;
 
 export const state = () => ({
@@ -8,17 +10,20 @@ export const state = () => ({
   stake: 0,
   limit: 0,
   allStakes: 0,
-  freezedStakes: [
-    // {
-    //   timestamp: 0,
-    //   stake: 0
-    // }
-  ]
+  freezedStakes: [],
+  authorities: {
+    new: [],
+    blacklist: []
+  }
 });
 
 export const getters = {
-  hasPapyrusNetwork: state =>
-    state.connectedNetwork === Number(process.env.VUE_APP_PAPYRUS_NETWORK_ID),
+  hasPapyrusNetwork: state => {
+    const availableNetworks = parseEnvVariable(
+      process.env.VUE_APP_PAPYRUS_NETWORK_ID
+    );
+    return availableNetworks.includes(state.connectedNetwork);
+  },
   metamaskIsConnected: state => !!state.account,
   hasFreezedStakes: state => state.freezedStakes.length > 0
 };
@@ -37,6 +42,12 @@ export const mutations = {
   },
   setFreezedStakes(state, freezedStakes) {
     state.freezedStakes = freezedStakes;
+  },
+  setAuthorities(state, { addresses, blacklistAddresses }) {
+    state.authorities = {
+      new: addresses.reverse(),
+      blacklist: blacklistAddresses.reverse()
+    };
   }
 };
 
@@ -52,6 +63,7 @@ export const actions = {
     if (state.account !== account) {
       dispatch('loadInitialData', account);
     } else {
+      // Every 2 seconds check connection to Metamask
       timer = setTimeout(() => dispatch('checkMetamaskConnection'), 2000);
     }
   },
@@ -65,7 +77,6 @@ export const actions = {
       dispatch('loadAccountData');
     }
     commit('setState', ['initializing', false]);
-    // Check every 2 seconds check connection to Metamask
     dispatch('checkMetamaskConnection');
     return true;
   },
@@ -84,22 +95,27 @@ export const actions = {
   },
 
   async loadFreezedStakes({ commit }) {
-    const { stake, timestamp } = await this.$service.getFreezedStakes();
-    const amount = stake.toString(10);
-    if (Number(amount) > 0) {
-      commit('setFreezedStakes', [{ amount, timestamp }]);
+    const stakes = await this.$service.getFreezedStakes();
+    if (stakes.length > 0) {
+      commit('setFreezedStakes', stakes);
     } else {
       commit('setFreezedStakes', []);
     }
   },
 
-  async loadPollAddresses() {
+  async loadPollAddresses({ commit }) {
     const [addresses, blacklistAddresses] = await Promise.all([
-      this.$service.addNewPollAddresses(),
-      this.$service.authorityBlacklistPollAddresses()
+      this.$service.getAddNewPollAddresses(),
+      this.$service.getAuthorityBlacklistPollAddresses()
     ]);
     // eslint-disable-next-line
-    console.log(addresses, blacklistAddresses);
+    commit('setAuthorities', { addresses, blacklistAddresses });
+  },
+
+  async dropClosedPolls({ dispatch }) {
+    await this.$service.dropClosedPolls({
+      onConfirmation: onVotingEvent(dispatch)
+    });
   },
 
   async stake({ dispatch }, amount) {
@@ -131,29 +147,29 @@ export const actions = {
 
   async proposeNewAuthority({ dispatch }, { address }) {
     return this.$service.proposeNewAuthority(address, {
-      onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onReceipt: onVotingEvent(dispatch),
+      onConfirmation: onVotingEvent(dispatch)
     });
   },
 
   async voteForNewAuthority({ dispatch }, { address, votes }) {
     return this.$service.voteForNewAuthority(votes, address, {
-      onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onReceipt: onVotingEvent(dispatch),
+      onConfirmation: onVotingEvent(dispatch)
     });
   },
 
   async proposeBlacklistAuthority({ dispatch }, { address }) {
     return this.$service.proposeBlacklistAuthority(address, {
-      onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onReceipt: onVotingEvent(dispatch),
+      onConfirmation: onVotingEvent(dispatch)
     });
   },
 
   async voteForBlackListAuthority({ dispatch }, { address }) {
     return this.$service.voteForBlackListAuthority(address, {
-      onReceipt: onReceipt(dispatch),
-      onConfirmation: onConfirmation(dispatch)
+      onReceipt: onVotingEvent(dispatch),
+      onConfirmation: onVotingEvent(dispatch)
     });
   }
 };
@@ -164,4 +180,11 @@ function onReceipt(dispatch) {
 
 function onConfirmation(dispatch) {
   return () => dispatch('loadAccountData');
+}
+
+function onVotingEvent(dispatch) {
+  return () => {
+    dispatch('loadAccountData');
+    dispatch('loadPollAddresses');
+  };
 }

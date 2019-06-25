@@ -2,8 +2,9 @@
   <div class="FreezedStakes">
     Pending Freezed Stakes:
     <StakeItem
-      v-for="stake in stakes"
+      v-for="(stake, index) in stakes"
       :key="stake.timestamp"
+      :index="index"
       :stake="stake"
       :now="now"
     />
@@ -11,32 +12,17 @@
 </template>
 
 <script>
+import { setNowMixin } from '@/components/mixins';
 import StakeItem from '@/components/FreezedStakes/StakeItem';
 
 export default {
   name: 'FreezedStakes',
   components: { StakeItem },
+  mixins: [setNowMixin],
   props: {
     stakes: {
       type: Array,
       default: () => []
-    }
-  },
-  data() {
-    return {
-      now: Date.now()
-    };
-  },
-  mounted() {
-    this.setNow();
-    this.$on('hook:beforeDestroy', () => {
-      clearTimeout(this.timeout);
-    });
-  },
-  methods: {
-    setNow() {
-      this.now = Date.now();
-      this.timeout = setTimeout(this.setNow, 100);
     }
   }
 };

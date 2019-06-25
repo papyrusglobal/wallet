@@ -30,7 +30,6 @@ async function startApp() {
   const provider = await getProvider();
   if (provider) {
     Vue.use(Web3Service, { store, provider });
-    // store.$service.askPermission();
   }
   store.dispatch('initApp');
 }

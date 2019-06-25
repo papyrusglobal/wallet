@@ -99,6 +99,7 @@ export default {
 
   &:not(.--loading):disabled {
     opacity: 0.34;
+    cursor: default;
   }
 
   &.--full-width {

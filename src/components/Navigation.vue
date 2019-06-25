@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { getScrollTop } from '@/utils/window';
+
 export default {
   name: 'Navigation',
   props: {
@@ -24,11 +26,7 @@ export default {
   },
   methods: {
     scrollToTop() {
-      if (
-        (window.pageYOffset ||
-          document.documentElement.scrollTop ||
-          document.body.scrollTop) > 0
-      ) {
+      if (getScrollTop() > 0) {
         window.scrollTo(0, 0);
       }
     }

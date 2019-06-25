@@ -2,28 +2,15 @@
   <div class="Staking">
     <CardSeparator />
     <form @submit.prevent="submit">
-      <div class="Staking__switcher mb-5">
-        <div class="Staking__switcher-item">
-          <input
-            v-model="action"
-            type="radio"
-            name="action"
-            id="stake"
-            value="stake"
-          />
-          <label for="stake">Stake</label>
-        </div>
-        <div class="Staking__switcher-item">
-          <input
-            v-model="action"
-            type="radio"
-            name="action"
-            id="unstake"
-            value="unstake"
-          />
-          <label for="unstake">Unstake</label>
-        </div>
-      </div>
+      <TabbedRadio
+        v-model="action"
+        name="action"
+        :options="[
+          { label: 'Stake', value: 'stake' },
+          { label: 'Unstake', value: 'unstake' }
+        ]"
+        class="mb-5"
+      />
       <Input
         v-model.number="amount"
         full-width
@@ -57,10 +44,12 @@ import CardSeparator from '@/components/CardSeparator';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import FreezedStakes from '@/components/FreezedStakes';
+import TabbedRadio from '@/components/TabbedRadio';
 
 export default {
   name: 'Staking',
   components: {
+    TabbedRadio,
     FreezedStakes,
     Button,
     CardSeparator,
@@ -95,7 +84,7 @@ export default {
         this.$toast.info(`Transaction #${hash} is being sent to the network`);
         this.amount = null;
       } catch (err) {
-        this.$toast.error('Something went wrong!');
+        // this.$toast.error('Something went wrong!');
       } finally {
         this.staking = false;
       }
@@ -103,38 +92,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.Staking {
-  &__switcher {
-    display: flex;
-
-    &-item {
-      flex: 0 0 50%;
-    }
-
-    label {
-      padding: 16px 0 14px;
-      display: block;
-      background-color: var(--white);
-      border: 1px solid var(--blue-bg);
-      cursor: pointer;
-      transition: background-color 0.15s;
-
-      &:hover {
-        color: var(--blue);
-      }
-    }
-
-    input {
-      display: none;
-
-      &:checked ~ label {
-        color: var(--blue);
-        font-weight: bold;
-        background-color: var(--blue-bg);
-      }
-    }
-  }
-}
-</style>

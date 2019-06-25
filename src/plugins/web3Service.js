@@ -1,6 +1,7 @@
 import Web3 from 'web3';
 import abi from '@/abis/abi.json';
 
+const GAS_PAYMENT = 150000;
 const noop = () => {};
 const cbCaller = function(fn, ...args) {
   if (fn && typeof fn === 'function') {
@@ -98,36 +99,52 @@ export class Web3Service {
     return this.process(
       this.contract.methods
         .withdraw()
-        .send({ from: this.account, gas: 100000 }),
+        .send({ from: this.account, gas: GAS_PAYMENT }),
       callbacks
     );
   }
 
   async getFreezedStakes() {
-    return this.contract.methods
-      .getMeltingHead()
+    const res = await this.contract.methods
+      .getMeltingSlots()
       .call({ from: this.account, gas: 0 });
+    const amounts = res[0];
+    const timestamp = res[1];
+    return amounts.map((amount, index) => ({
+      amount,
+      timestamp: timestamp[index]
+    }));
   }
 
-  async addNewPollAddresses() {
-    return this.contract.methods.addNewPollAddresses(123).call({
+  async getAddNewPollAddresses() {
+    return this.contract.methods.getAddNewPollAddresses().call({
       from: this.account,
       gas: 0
     });
   }
 
-  async authorityBlacklistPollAddresses() {
-    return this.contract.methods.authorityBlacklistPollAddresses(123).call({
+  async getAuthorityBlacklistPollAddresses() {
+    return this.contract.methods.getAuthorityBlacklistPollAddresses().call({
       from: this.account,
       gas: 0
     });
+  }
+
+  async dropClosedPolls(callbacks = {}) {
+    return this.process(
+      this.contract.methods.handleClosedPolls.send({
+        from: this.account,
+        gas: 0
+      }),
+      callbacks
+    );
   }
 
   async proposeNewAuthority(address, callbacks = {}) {
     return this.process(
       this.contract.methods.proposeNewAuthority(address).send({
         from: this.account,
-        gas: 100000
+        gas: GAS_PAYMENT
       }),
       callbacks
     );
@@ -137,7 +154,7 @@ export class Web3Service {
     return this.process(
       this.contract.methods.proposeBlacklistAuthority(address).send({
         from: this.account,
-        gas: 100000
+        gas: GAS_PAYMENT
       }),
       callbacks
     );
@@ -147,7 +164,7 @@ export class Web3Service {
     return this.process(
       this.contract.methods.voteForNewAuthority(votes, address).send({
         from: this.account,
-        gas: 100000
+        gas: GAS_PAYMENT
       }),
       callbacks
     );
@@ -157,7 +174,7 @@ export class Web3Service {
     return this.process(
       this.contract.methods.voteForBlackListAuthority(address).send({
         from: this.account,
-        gas: 100000
+        gas: GAS_PAYMENT
       }),
       callbacks
     );

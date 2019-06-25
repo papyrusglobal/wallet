@@ -62,3 +62,9 @@ a {
     text-decoration: underline;
   }
 }
+
+.text-overflow {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

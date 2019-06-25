@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { millisecondsToWords } from '@/utils/filters';
 import Button from '@/components/Button';
 
 const WITHDRAW_CONSTANT_TIME = 2 * 60 * 1000;
@@ -35,27 +36,17 @@ export default {
       type: Number,
       required: true
     },
+    index: {
+      type: Number,
+      default: 0
+    },
     stake: {
       type: Object,
       required: true
     }
   },
   filters: {
-    millisecondsToWords(milliseconds) {
-      if (milliseconds <= 0) {
-        return '0s';
-      }
-      const hours = Math.floor(milliseconds / 1000 / 3600);
-      milliseconds = (milliseconds / 1000) % 3600;
-      const minutes = Math.floor(milliseconds / 60);
-      const seconds = Math.floor(milliseconds % 60);
-      if (hours > 0) {
-        return `${hours}h ${minutes}m ${seconds}s`;
-      } else if (minutes > 0) {
-        return `${minutes}m ${seconds}s`;
-      }
-      return `${seconds}s`;
-    }
+    millisecondsToWords
   },
   data() {
     return {
@@ -68,7 +59,7 @@ export default {
       return WITHDRAW_CONSTANT_TIME + this.stake.timestamp * 1000 - this.now;
     },
     isDisabledWithdraw() {
-      return this.timeLeft > 0 || this.transactionSent;
+      return this.index > 0 || this.timeLeft > 0 || this.transactionSent;
     }
   },
   methods: {

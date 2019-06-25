@@ -1,13 +1,15 @@
 <template>
   <div class="AccountInfo">
-    <Avatar :hash="account" />
-    <h2 class="AccountInfo__account" :title="account">{{ account }}</h2>
+    <Avatar :hash="account" colored />
+    <h2 class="AccountInfo__address text-overflow" :title="account">
+      {{ account }}
+    </h2>
     <span class="AccountInfo__balance" @click="showEth = !showEth">
       <template v-if="showEth">
         ~{{ balance | toEther | formatPrice }} ETH
       </template>
       <template v-else>
-        {{ balance }} wei
+        {{ balance | formatPrice(10) }} wei
       </template>
     </span>
     <div class="AccountInfo__stakes">
@@ -28,6 +30,7 @@
 </template>
 
 <script>
+import numbro from 'numbro';
 import { mapState } from 'vuex';
 import { ETHER } from '@/constants';
 import Avatar from '@/components/Avatar';
@@ -44,8 +47,16 @@ export default {
     toEther(value) {
       return value / ETHER;
     },
-    formatPrice(value) {
-      return Number(value).toLocaleString();
+    formatPrice(value, totalLength = 6) {
+      return value
+        ? numbro(value).format({
+            totalLength,
+            mantissa: 4,
+            trimMantissa: true,
+            optionalMantissa: true,
+            thousandSeparated: true
+          })
+        : 0;
     }
   },
   computed: {
@@ -56,9 +67,7 @@ export default {
 
 <style lang="scss" scoped>
 .AccountInfo {
-  &__account {
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &__address {
     margin: 16px 0 0 0;
   }
 
