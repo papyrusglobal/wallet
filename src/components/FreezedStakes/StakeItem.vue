@@ -6,7 +6,7 @@
     </div>
     <div>
       <h5>Time left</h5>
-      {{ timeLeft | millisecondsToWords }}<br />
+      {{ timeLeft | millisecondsToWords('ready') }}<br />
     </div>
     <div class="FreezedStakes__table-last">
       <Button

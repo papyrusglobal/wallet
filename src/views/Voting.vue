@@ -11,23 +11,21 @@
         class="mb-5"
       />
       <Input
-        v-model="address"
+        v-model.trim="address"
         full-width
         type="text"
         :disabled="submitting"
         :value="address"
         :error="hasAddressError"
-        :class="{ [`mb-${action.fields.includes('votes') ? 4 : 5}`]: true }"
+        :class="{ [`mb-${action.fields.includes('vote') ? 4 : 5}`]: true }"
         placeholder="Address of authority"
       />
-      <Input
-        v-if="action.fields.includes('votes')"
-        v-model.number="votes"
+      <VoteCards
+        v-model.number="vote"
+        v-if="action.fields.includes('vote')"
+        :slots="authorityState.slots"
         :disabled="submitting"
-        type="number"
-        full-width
         class="mb-5"
-        placeholder="How many votes you want to use"
       />
       <Button
         full-width
@@ -83,6 +81,7 @@ import Button from '@/components/Button';
 import TabbedRadio from '@/components/TabbedRadio';
 import PollsList from '@/components/PollsList';
 import { getElementOffsetTop, getScrollTop } from '@/utils/window';
+import VoteCards from '@/components/VoteCards';
 
 const choices = [
   {
@@ -95,7 +94,7 @@ const choices = [
     title: 'Vote for the new authority',
     value: 'voteForNewAuthority',
     type: 'vote',
-    fields: ['votes', 'address']
+    fields: ['address', 'vote']
   },
   {
     title:
@@ -123,6 +122,7 @@ const choices = [
 export default {
   name: 'Voting',
   components: {
+    VoteCards,
     PollsList,
     TabbedRadio,
     Button,
@@ -142,15 +142,15 @@ export default {
         choices[actionIndex] && !choices[actionIndex].disabled
           ? choices[actionIndex]
           : choices[0],
-      votes: null,
+      vote: null,
       address: null,
       type: 'new'
     };
   },
   watch: {
     action(next) {
-      if (!next.fields.includes('votes')) {
-        this.votes = null;
+      if (!next.fields.includes('vote')) {
+        this.vote = null;
       }
     }
   },
@@ -166,15 +166,26 @@ export default {
       return (
         !this.submitting &&
         !this.hasAddressError &&
-        fields.every(field => !!this[field])
+        fields.every(
+          field =>
+            this[field] !== null &&
+            this[field] !== undefined &&
+            this[field] !== ''
+        )
       );
     },
-    ...mapState(['account', 'authorities'])
+    ...mapState(['account', 'authorities', 'authorityState'])
   },
-  mounted() {
-    this.loadPolls();
+  async mounted() {
+    await this.load();
+    await this.$store.dispatch('loadAuthorityState');
     this.$on('hook:beforeDestroy', () => {
       clearTimeout(this.timer);
+    });
+    this.$nextTick(() => {
+      if (this.authorities.new.length === 0) {
+        this.type = 'blacklist';
+      }
     });
   },
   methods: {
@@ -205,7 +216,7 @@ export default {
     },
     clearForm() {
       this.address = null;
-      this.votes = null;
+      this.vote = null;
     },
     getFormData() {
       return this.action.fields.reduce((res, field) => {
@@ -224,8 +235,8 @@ export default {
         this.clearing = false;
       }
     },
-    async loadPolls() {
-      await this.$store.dispatch('loadPollAddresses');
+    async load() {
+      await Promise.all([this.$store.dispatch('loadPollAddresses')]);
       this.timer = setTimeout(this.loadPolls, 5000);
     },
     async submit() {

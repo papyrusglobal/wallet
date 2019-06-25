@@ -1,6 +1,6 @@
-export const millisecondsToWords = milliseconds => {
+export const millisecondsToWords = (milliseconds, zero = '0s') => {
   if (milliseconds <= 0) {
-    return '0s';
+    return zero;
   }
   const hours = Math.floor(milliseconds / 1000 / 3600);
   milliseconds = (milliseconds / 1000) % 3600;

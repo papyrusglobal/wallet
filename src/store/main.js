@@ -14,6 +14,10 @@ export const state = () => ({
   authorities: {
     new: [],
     blacklist: []
+  },
+  authorityState: {
+    votes: 0,
+    slots: []
   }
 });
 
@@ -25,7 +29,8 @@ export const getters = {
     return availableNetworks.includes(state.connectedNetwork);
   },
   metamaskIsConnected: state => !!state.account,
-  hasFreezedStakes: state => state.freezedStakes.length > 0
+  hasFreezedStakes: state => state.freezedStakes.length > 0,
+  votedAddresses: state => state.authorityState.slots.map(slot => slot.address)
 };
 
 export const mutations = {
@@ -48,6 +53,9 @@ export const mutations = {
       new: addresses.reverse(),
       blacklist: blacklistAddresses.reverse()
     };
+  },
+  setAuthorityState(state, authorityState) {
+    state.authorityState = authorityState;
   }
 };
 
@@ -112,6 +120,11 @@ export const actions = {
     commit('setAuthorities', { addresses, blacklistAddresses });
   },
 
+  async loadAuthorityState({ commit }) {
+    const authorityState = await this.$service.getAuthorityState();
+    commit('setAuthorityState', authorityState);
+  },
+
   async dropClosedPolls({ dispatch }) {
     await this.$service.dropClosedPolls({
       onConfirmation: onVotingEvent(dispatch)
@@ -152,8 +165,8 @@ export const actions = {
     });
   },
 
-  async voteForNewAuthority({ dispatch }, { address, votes }) {
-    return this.$service.voteForNewAuthority(votes, address, {
+  async voteForNewAuthority({ dispatch }, { address, vote }) {
+    return this.$service.voteForNewAuthority(vote, address, {
       onReceipt: onVotingEvent(dispatch),
       onConfirmation: onVotingEvent(dispatch)
     });
@@ -186,5 +199,6 @@ function onVotingEvent(dispatch) {
   return () => {
     dispatch('loadAccountData');
     dispatch('loadPollAddresses');
+    dispatch('loadAuthorityState');
   };
 }

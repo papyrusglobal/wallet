@@ -1,6 +1,6 @@
 <template>
   <div class="AccountInfo">
-    <Avatar :hash="account" colored />
+    <Avatar :hash="account" colored class="AccountInfo__avatar" />
     <h2 class="AccountInfo__address text-overflow" :title="account">
       {{ account }}
     </h2>
@@ -67,6 +67,15 @@ export default {
 
 <style lang="scss" scoped>
 .AccountInfo {
+  &__avatar {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+      box-shadow 0.3s;
+    &:hover {
+      transform: translate(0px, -12%) scale(1.5);
+      box-shadow: 0 24px 24px -4px var(--grey);
+    }
+  }
+
   &__address {
     margin: 16px 0 0 0;
   }

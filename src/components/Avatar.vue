@@ -4,6 +4,7 @@
     :src="src"
     v-bind="$attrs"
     class="Avatar"
+    :class="{ '--circle': circle }"
     :width="size"
     :height="size"
   />
@@ -25,6 +26,10 @@ export default {
       default: 64
     },
     colored: {
+      type: Boolean,
+      default: false
+    },
+    circle: {
       type: Boolean,
       default: false
     }
@@ -51,6 +56,8 @@ export default {
 
 <style lang="scss" scoped>
 .Avatar {
-  border-radius: 50%;
+  &.--circle {
+    border-radius: 50%;
+  }
 }
 </style>

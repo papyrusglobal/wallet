@@ -104,6 +104,13 @@ export class Web3Service {
     );
   }
 
+  async getSealerStates() {
+    return this.contract.methods.sealerStates(this.account).call({
+      from: this.account,
+      gas: 0
+    });
+  }
+
   async getFreezedStakes() {
     const res = await this.contract.methods
       .getMeltingSlots()
@@ -116,18 +123,65 @@ export class Web3Service {
     }));
   }
 
+  async getAuthorityState() {
+    const data = await this.contract.methods
+      .getAuthorityState(this.account)
+      .call({
+        from: this.account,
+        gas: 0
+      });
+    return {
+      votes: Number(data[0]),
+      slots: data[1].map((address, index) => ({
+        address,
+        timestamp: Number(data[2][index])
+      }))
+    };
+  }
+
   async getAddNewPollAddresses() {
-    return this.contract.methods.getAddNewPollAddresses().call({
-      from: this.account,
-      gas: 0
-    });
+    const addresses = await this.contract.methods
+      .getAddNewPollAddresses()
+      .call({
+        from: this.account,
+        gas: 0
+      });
+    const addressesData = await Promise.all(
+      addresses.map(address =>
+        this.contract.methods.addNewPoll(address).call({
+          from: this.account,
+          gas: 0
+        })
+      )
+    );
+    return addresses.map((address, index) => ({
+      address,
+      timestamp: addressesData[index].closeTime,
+      votes: Number(addressesData[index].votes)
+    }));
   }
 
   async getAuthorityBlacklistPollAddresses() {
-    return this.contract.methods.getAuthorityBlacklistPollAddresses().call({
-      from: this.account,
-      gas: 0
-    });
+    const addresses = await this.contract.methods
+      .getAuthorityBlacklistPollAddresses()
+      .call({
+        from: this.account,
+        gas: 0
+      });
+    const addressesData = await Promise.all(
+      addresses.map(address =>
+        this.contract.methods.authorityBlacklistPoll(address).call({
+          from: this.account,
+          gas: 0
+        })
+      )
+    );
+    return addresses.map((address, index) => ({
+      address,
+      timestamp: addressesData[index].closeTime,
+      votes: Number(addressesData[index].votes),
+      voted: addressesData[index].voted || false
+    }));
   }
 
   async dropClosedPolls(callbacks = {}) {

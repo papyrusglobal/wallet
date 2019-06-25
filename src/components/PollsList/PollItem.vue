@@ -1,27 +1,30 @@
 <template>
   <li
     class="PollItem"
-    :class="{ '--inactive': timeLeft <= 0 }"
-    @click="$emit('select', address)"
+    :class="{
+      '--inactive': isInactive,
+      '--has-votes': authority.votes > 0,
+      '--voted': isVoted
+    }"
+    @click="!isInactive && $emit('select', authority.address)"
   >
-    <Avatar :hash="address" size="40" class="PollItem__avatar" />
+    <Avatar :hash="authority.address" size="40" class="PollItem__avatar" />
     <div class="PollItem__text">
-      <span class="text-overflow">{{ address }}</span>
+      <span class="text-overflow">{{ authority.address }}</span>
       <span class="PollItem__votes">
-        {{ votes }} vote{{ votes === 1 ? '' : 's' }}
+        {{ authority.votes }} vote{{ authority.votes === 1 ? '' : 's' }}
       </span>
       <span class="PollItem__due"
-        >&rsaquo; {{ timeLeft | millisecondsToWords }}</span
+        >&rsaquo; {{ timeLeft | millisecondsToWords('closed') }}</span
       >
     </div>
   </li>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import { millisecondsToWords } from '@/utils/filters';
 import Avatar from '@/components/Avatar';
-
-const POLL_CONSTANT_TIME = 67 * 1000;
 
 export default {
   name: 'PollItem',
@@ -30,32 +33,29 @@ export default {
     millisecondsToWords
   },
   props: {
-    address: {
-      type: String,
+    authority: {
+      type: Object,
       required: true
     },
     now: {
       type: Number,
       required: true
     }
-    // votes: {
-    //   type: Number,
-    //   default: 0
-    // }
-  },
-  data() {
-    return {
-      votes: 0
-    };
-  },
-  beforeMount() {
-    this.votes = Math.floor(Math.random() * 50);
-    this.mountTime = Date.now() + Math.floor(Math.random() * 100) * 1000;
   },
   computed: {
+    isVoted() {
+      return (
+        !!this.authority.voted ||
+        this.votedAddresses.includes(this.authority.address)
+      );
+    },
     timeLeft() {
-      return POLL_CONSTANT_TIME + this.mountTime - this.now;
-    }
+      return this.authority.timestamp * 1000 - this.now;
+    },
+    isInactive() {
+      return this.timeLeft <= 0;
+    },
+    ...mapGetters(['votedAddresses'])
   }
 };
 </script>
@@ -65,22 +65,33 @@ export default {
   $parent: &;
 
   display: flex;
-  cursor: pointer;
   align-items: center;
   padding: 8px 0;
   transition: opacity 0.25s;
 
-  /*&:last-child {*/
-  /*padding-bottom: 0;*/
-  /*}*/
+  &.--has-votes {
+    #{$parent}__votes {
+      color: var(--blue);
+    }
+  }
+
+  &.--voted {
+    #{$parent}__votes {
+      color: var(--green);
+    }
+  }
 
   &.--inactive {
     opacity: 0.57;
   }
 
-  &:hover {
-    #{$parent}__text {
-      background: var(--blue-bg);
+  &:not(.--inactive) {
+    cursor: pointer;
+
+    &:hover {
+      #{$parent}__text {
+        background: var(--blue-bg);
+      }
     }
   }
 
@@ -95,10 +106,6 @@ export default {
     min-width: 0;
     padding: 9px 8px 7px;
     transition: background-color 0.15s;
-  }
-
-  &__votes {
-    color: var(--blue);
   }
 }
 </style>

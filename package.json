@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "date-fns": "^2.0.0-alpha.37",
     "identicon.js": "^2.3.3",
     "numbro": "^2.1.2",
     "shallowequal": "^1.1.0",

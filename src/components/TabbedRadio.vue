@@ -5,6 +5,8 @@
       :key="option.value"
       class="TabbedRadio__item"
       :class="{ '--disabled': option.disabled }"
+      :tabindex="option.disabled ? -1 : 0"
+      @keydown.enter.space="$emit('change', option.value)"
     >
       <input
         type="radio"
@@ -47,9 +49,15 @@ export default {
   display: flex;
 
   &__item {
+    position: relative;
+    z-index: 0;
     flex-grow: 1;
     flex-basis: 88px;
     min-width: 0;
+
+    &:focus {
+      z-index: 1;
+    }
 
     &.--disabled {
       label {

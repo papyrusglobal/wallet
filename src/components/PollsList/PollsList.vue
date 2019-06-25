@@ -2,9 +2,9 @@
   <ul class="PollsList">
     <template v-if="authorities.length">
       <PollItem
-        v-for="address in authorities"
-        :key="address"
-        :address="address"
+        v-for="authority in authorities"
+        :key="authority.address"
+        :authority="authority"
         :now="now"
         @select="$emit('select', $event)"
       />
