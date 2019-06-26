@@ -8,7 +8,7 @@ docker build https://github.com/papyrusglobal/wallet.git -t wallet:latest && doc
 ```
 #### Harder
 ```
-git clone https://github.com/papyrusglobal/wallet.git 
+git clone git@github.com:papyrusglobal/wallet.git
 docker-compose up
 ```
 
