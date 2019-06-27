@@ -10,6 +10,7 @@
     </div>
     <div class="FreezedStakes__table-last">
       <Button
+        v-if="isHiddenWithdraw"
         outline
         small
         :loading="withdrawing"
@@ -59,7 +60,10 @@ export default {
       return WITHDRAW_CONSTANT_TIME + this.stake.timestamp * 1000 - this.now;
     },
     isDisabledWithdraw() {
-      return this.index > 0 || this.timeLeft > 0 || this.transactionSent;
+      return this.timeLeft > 0 || this.transactionSent;
+    },
+    isHiddenWithdraw() {
+      return this.index === 0;
     }
   },
   methods: {
@@ -99,6 +103,6 @@ export default {
 
 h5 {
   margin: 0;
-  color: var(--grey);
+  color: var(--blue-grey);
 }
 </style>

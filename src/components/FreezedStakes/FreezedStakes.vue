@@ -1,6 +1,6 @@
 <template>
   <div class="FreezedStakes">
-    Pending Freezed Stakes
+    Unstakes Pending
     <StakeItem
       v-for="(stake, index) in stakes"
       :key="`${index}-${stake.timestamp}`"

@@ -5,8 +5,9 @@
         v-for="authority in authorities"
         :key="authority.address"
         :authority="authority"
+        :disabled="disabled"
         :now="now"
-        @select="$emit('select', $event)"
+        @select="!disabled && $emit('select', $event)"
       />
     </template>
     <template v-else>
@@ -29,6 +30,10 @@ export default {
     authorities: {
       type: Array,
       default: () => []
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   }
 };

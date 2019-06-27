@@ -72,11 +72,13 @@ export default {
       box-shadow 0.3s;
     &:hover {
       transform: translate(0px, -12%) scale(1.5);
-      box-shadow: 0 24px 24px -4px var(--grey);
+      box-shadow: 0 24px 24px -4px var(--blue-grey);
     }
   }
 
   &__address {
+    font-size: 1.2rem;
+    line-height: 1.4rem;
     margin: 16px 0 0 0;
   }
 
@@ -104,7 +106,7 @@ export default {
     }
 
     h5 {
-      color: var(--grey);
+      color: var(--blue-grey);
       margin: 0;
     }
   }

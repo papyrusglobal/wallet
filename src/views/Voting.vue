@@ -1,6 +1,12 @@
 <template>
   <div class="Voting">
     <CardSeparator />
+    <div
+      v-if="isAuthorityStateLoaded && !isAuthority"
+      class="Voting__not-authority"
+    >
+      You're not an authority node and you can't propose or vote on authorities!
+    </div>
     <form @submit.prevent="submit" ref="form">
       <Select
         v-model="action"
@@ -18,20 +24,20 @@
         :value="address"
         :error="hasAddressError"
         :class="{ [`mb-${action.fields.includes('vote') ? 4 : 5}`]: true }"
-        placeholder="Address of authority"
+        label="Address of authority"
       />
       <VoteCards
         v-model.number="vote"
         v-if="action.fields.includes('vote')"
         :slots="authorityState.slots"
-        :disabled="submitting"
+        :disabled="!isAuthority || submitting"
         class="mb-5"
       />
       <Button
         full-width
         class="Voting__button"
         :loading="submitting"
-        :disabled="!canSubmit"
+        :disabled="!isAuthority || !canSubmit"
       >
         {{ action.type || 'Submit' }}
       </Button>
@@ -54,6 +60,7 @@
       />
       <PollsList
         :authorities="authorities[type]"
+        :disabled="!isAuthority"
         class="mt-4"
         @select="onSelectAuthority"
       />
@@ -65,7 +72,7 @@
         :loading="clearing"
         @click="clearInactivePolls"
       >
-        Clear inactive polls
+        Finalise Polls
       </Button>
     </div>
   </div>
@@ -73,7 +80,7 @@
 
 <script>
 import { isAddress } from 'web3-utils';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import CardSeparator from '@/components/CardSeparator';
 import Input from '@/components/Input';
 import Select from '@/components/Select';
@@ -174,7 +181,8 @@ export default {
         )
       );
     },
-    ...mapState(['account', 'authorities', 'authorityState'])
+    ...mapState(['account', 'authorities', 'authorityState']),
+    ...mapGetters(['isAuthorityStateLoaded', 'isAuthority'])
   },
   async mounted() {
     await this.load();
@@ -236,10 +244,11 @@ export default {
       }
     },
     async load() {
-      await Promise.all([this.$store.dispatch('loadPollAddresses')]);
-      this.timer = setTimeout(this.loadPolls, 5000);
+      await this.$store.dispatch('loadPollAddresses');
+      this.timer = setTimeout(this.load, 5000);
     },
     async submit() {
+      if (!this.isAuthority || this.submitting) return;
       const { value: method } = this.action;
       this.submitting = true;
       try {
@@ -257,3 +266,15 @@ export default {
   choices
 };
 </script>
+
+<style lang="scss" scoped>
+.Voting {
+  &__not-authority {
+    background-color: var(--red-bg);
+    color: red;
+    margin-bottom: 24px;
+    text-align: left;
+    padding: 8px 16px;
+  }
+}
+</style>

@@ -3,10 +3,11 @@
     class="PollItem"
     :class="{
       '--inactive': isInactive,
+      '--disabled': disabled,
       '--has-votes': authority.votes > 0,
       '--voted': isVoted
     }"
-    @click="!isInactive && $emit('select', authority.address)"
+    @click="!isInactive && !disabled && $emit('select', authority.address)"
   >
     <Avatar :hash="authority.address" size="40" class="PollItem__avatar" />
     <div class="PollItem__text">
@@ -36,6 +37,10 @@ export default {
     authority: {
       type: Object,
       required: true
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     now: {
       type: Number,
@@ -85,7 +90,7 @@ export default {
     opacity: 0.57;
   }
 
-  &:not(.--inactive) {
+  &:not(.--inactive):not(.--disabled) {
     cursor: pointer;
 
     &:hover {

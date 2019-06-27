@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { parseEnvVariable } from '@/utils/env';
 
 let timer;
@@ -16,8 +17,9 @@ export const state = () => ({
     blacklist: []
   },
   authorityState: {
-    votes: 0,
-    slots: []
+    loaded: false,
+    votes: undefined,
+    slots: Array(7).fill(0)
   }
 });
 
@@ -30,7 +32,9 @@ export const getters = {
   },
   metamaskIsConnected: state => !!state.account,
   hasFreezedStakes: state => state.freezedStakes.length > 0,
-  votedAddresses: state => state.authorityState.slots.map(slot => slot.address)
+  votedAddresses: state => state.authorityState.slots.map(slot => slot.address),
+  isAuthorityStateLoaded: ({ authorityState }) => authorityState.loaded,
+  isAuthority: ({ authorityState }) => authorityState.votes !== undefined
 };
 
 export const mutations = {
@@ -55,7 +59,14 @@ export const mutations = {
     };
   },
   setAuthorityState(state, authorityState) {
-    state.authorityState = authorityState;
+    if (authorityState === undefined) {
+      Vue.set(state.authorityState, 'loaded', true);
+      return;
+    }
+    state.authorityState = {
+      loaded: true,
+      ...authorityState
+    };
   }
 };
 
@@ -116,7 +127,6 @@ export const actions = {
       this.$service.getAddNewPollAddresses(),
       this.$service.getAuthorityBlacklistPollAddresses()
     ]);
-    // eslint-disable-next-line
     commit('setAuthorities', { addresses, blacklistAddresses });
   },
 

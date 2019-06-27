@@ -11,18 +11,40 @@
         ]"
         class="mb-5"
       />
+      <div style="display: flex;">
+        <Input
+          v-model.number="amount"
+          full-width
+          type="number"
+          min="0"
+          :max="isUnstakeAction ? stake : null"
+          class="mb-4"
+          style="flex-basis: 50%; margin-right: 8px;"
+          :error="amountHasError"
+          :disabled="staking"
+          :label="`Wei to ${action}`"
+        />
+        <Input
+          v-model="gas"
+          full-width
+          type="number"
+          min="0"
+          style="flex-basis: 50%; margin-left: 8px;"
+          :max="isUnstakeAction ? stake : null"
+          class="mb-4"
+          :error="amountHasError"
+          :disabled="staking"
+          :label="`Gas you ${action === 'stake' ? 'get' : 'pay'}`"
+        />
+      </div>
       <Input
-        v-model.number="amount"
         full-width
-        type="number"
-        min="0"
-        :max="isUnstakeAction ? stake : null"
-        class="mb-4"
-        :error="amountHasError"
-        :disabled="staking"
-        :placeholder="`How many wei you want to ${action}`"
+        type="text"
+        readonly
+        :value="account"
+        class="mb-5"
+        label="To address"
       />
-      <Input full-width type="text" readonly :value="account" class="mb-5" />
       <Button
         full-width
         :disabled="!amount || amountHasError"
@@ -40,6 +62,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import CardSeparator from '@/components/CardSeparator';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
@@ -73,11 +96,24 @@ export default {
     amountHasError() {
       return this.isUnstakeAction && this.amount > Number(this.stake);
     },
+    gas: {
+      get() {
+        return this.amount
+          ? new BigNumber(this.amount).multipliedBy(10000).toNumber()
+          : null;
+      },
+      set(value) {
+        this.amount = value
+          ? new BigNumber(value).dividedBy(10000).toNumber()
+          : null;
+      }
+    },
     ...mapState(['account', 'stake', 'freezedStakes']),
     ...mapGetters(['hasFreezedStakes'])
   },
   methods: {
     async submit() {
+      if (!this.amount || this.amountHasError) return;
       this.staking = true;
       try {
         const hash = await this.$store.dispatch(this.action, this.amount);

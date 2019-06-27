@@ -74,7 +74,8 @@ export default {
       if (this.disabled) return;
       this.$emit('change', value === this.value ? null : value);
     }
-  }
+  },
+  numberOfSlots: Array(7).fill(0)
 };
 </script>
 

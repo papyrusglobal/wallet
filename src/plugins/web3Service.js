@@ -115,6 +115,7 @@ export class Web3Service {
     const res = await this.contract.methods
       .getMeltingSlots()
       .call({ from: this.account, gas: 0 });
+    if (!res) return [];
     const amounts = res[0];
     const timestamp = res[1];
     return amounts.map((amount, index) => ({
@@ -130,6 +131,7 @@ export class Web3Service {
         from: this.account,
         gas: 0
       });
+    if (!data) return;
     return {
       votes: Number(data[0]),
       slots: data[1].map((address, index) => ({
@@ -146,6 +148,9 @@ export class Web3Service {
         from: this.account,
         gas: 0
       });
+    if (!addresses) {
+      return [];
+    }
     const addressesData = await Promise.all(
       addresses.map(address =>
         this.contract.methods.addNewPoll(address).call({
@@ -168,6 +173,9 @@ export class Web3Service {
         from: this.account,
         gas: 0
       });
+    if (!addresses) {
+      return [];
+    }
     const addressesData = await Promise.all(
       addresses.map(address =>
         this.contract.methods.authorityBlacklistPoll(address).call({

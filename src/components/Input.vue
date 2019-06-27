@@ -1,12 +1,26 @@
 <template>
-  <input
-    :value="value"
-    :class="{ '--full-width': fullWidth, '--error': this.error }"
-    v-bind="$attrs"
+  <div
     class="Input"
-    v-on="$listeners"
-    @input="$emit('changing', $event.target.value)"
-  />
+    :class="{
+      '--full-width': fullWidth,
+      '--error': this.error,
+      '--focused': this.focused || ![null, undefined, ''].includes(this.value),
+      '--labeled': ![null, undefined, ''].includes(this.label)
+    }"
+  >
+    <label v-if="label" class="Input__label text-overflow">
+      {{ label }}
+    </label>
+    <input
+      :value="value"
+      v-bind="$attrs"
+      class="Input__field"
+      v-on="$listeners"
+      @focus="focused = true"
+      @blur="focused = false"
+      @input="$emit('changing', $event.target.value)"
+    />
+  </div>
 </template>
 
 <script>
@@ -24,27 +38,72 @@ export default {
     error: {
       type: Boolean,
       default: false
+    },
+    label: {
+      type: String,
+      default: null
     }
+  },
+  data() {
+    return {
+      focused: false
+    };
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .Input {
-  padding: 20px 16px 18px;
-  border: 1px solid var(--input-border);
-  outline: none;
+  $parent: &;
+  position: relative;
 
-  &:focus {
-    border-color: var(--light-blue);
+  &__field {
+    padding: 20px 16px 18px;
+    border: 1px solid var(--input-border);
+    outline: none;
+
+    &:focus {
+      border-color: var(--light-blue);
+    }
+  }
+
+  &__label {
+    pointer-events: none;
+    position: absolute;
+    padding: 17px 17px 15px;
+    transition: all 0.25s;
+    color: var(--grey);
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  &.--focused {
+    #{$parent}__label {
+      padding: 6px 17px;
+      font-size: 0.8rem;
+    }
   }
 
   &.--full-width {
-    width: 100%;
+    #{$parent}__field {
+      width: 100%;
+    }
   }
 
   &.--error {
-    border-color: var(--red);
+    #{$parent}__label {
+      color: var(--red);
+    }
+    #{$parent}__field {
+      border-color: var(--red);
+    }
+  }
+
+  &.--labeled {
+    #{$parent}__field {
+      padding: 30px 16px 8px;
+    }
   }
 }
 </style>
