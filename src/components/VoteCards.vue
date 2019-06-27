@@ -22,7 +22,7 @@
       >
         <div class="VoteCards__info-inner mt-2">
           <span class="VoteCards__info-date"
-            >Used {{ currentSlotDate }} on</span
+            >Vote slot used {{ currentSlotDate }} on</span
           >
           <span class="text-overflow">{{ currentSlot.address }}</span>
         </div>

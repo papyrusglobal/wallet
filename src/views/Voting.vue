@@ -22,27 +22,31 @@
         type="text"
         :disabled="submitting"
         :value="address"
-        :error="hasAddressError"
+        :error="hasAddressError || hasPollAddressError"
+        :error-text="
+          hasPollAddressError &&
+            'You can only vote for authorities from active polls'
+        "
         :class="{ [`mb-${action.fields.includes('vote') ? 4 : 5}`]: true }"
         label="Address of authority"
       />
       <VoteCards
-        v-model.number="vote"
         v-if="action.fields.includes('vote')"
+        v-model.number="vote"
         :slots="authorityState.slots"
-        :disabled="!isAuthority || submitting"
+        :disabled="submitting"
         class="mb-5"
       />
       <Button
         full-width
         class="Voting__button"
         :loading="submitting"
-        :disabled="!isAuthority || !canSubmit"
+        :disabled="!canSubmit"
       >
         {{ action.type || 'Submit' }}
       </Button>
     </form>
-    <div v-if="hasAuthorities">
+    <div v-if="hasPolls">
       <CardSeparator />
       <TabbedRadio
         v-model="type"
@@ -59,7 +63,7 @@
         ]"
       />
       <PollsList
-        :authorities="authorities[type]"
+        :polls="polls[type]"
         :disabled="!isAuthority"
         class="mt-4"
         @select="onSelectAuthority"
@@ -162,15 +166,26 @@ export default {
     }
   },
   computed: {
+    ...mapState(['account', 'polls', 'authorityState']),
+    ...mapGetters(['isAuthorityStateLoaded', 'isAuthority']),
     hasAddressError() {
       return !!this.address && !isAddress(this.address);
     },
-    hasAuthorities() {
-      return Object.values(this.authorities).some(a => a.length > 0);
+    hasPollAddressError() {
+      if (!this.address || this.action.type === 'propose') return false;
+      const pollType =
+        this.action.value === 'voteForBlackListAuthority' ? 'blacklist' : 'new';
+      const poll = this.polls[pollType].find(i => i.address === this.address);
+      if (!poll) return true;
+      return poll.timestamp * 1000 < Date.now();
+    },
+    hasPolls() {
+      return Object.values(this.polls).some(a => a.length > 0);
     },
     canSubmit() {
       const { fields } = this.action;
       return (
+        this.isAuthority &&
         !this.submitting &&
         !this.hasAddressError &&
         fields.every(
@@ -180,9 +195,7 @@ export default {
             this[field] !== ''
         )
       );
-    },
-    ...mapState(['account', 'authorities', 'authorityState']),
-    ...mapGetters(['isAuthorityStateLoaded', 'isAuthority'])
+    }
   },
   async mounted() {
     await this.load();
@@ -191,7 +204,7 @@ export default {
       clearTimeout(this.timer);
     });
     this.$nextTick(() => {
-      if (this.authorities.new.length === 0) {
+      if (this.polls.new.length === 0 && this.polls.blacklist.length > 0) {
         this.type = 'blacklist';
       }
     });

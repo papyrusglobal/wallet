@@ -14,6 +14,7 @@ export class Web3Service {
   contract = null;
   provider = null;
   account = null;
+  isAuthority = null;
 
   constructor(provider) {
     this.provider = provider;
@@ -71,6 +72,14 @@ export class Web3Service {
       .call({ from: this.account });
   }
 
+  async getLatestBlock() {
+    const blockNumber = await this.web3.eth.getBlockNumber();
+    if (!this.block || this.block.number !== blockNumber) {
+      this.block = await this.web3.eth.getBlock(blockNumber);
+    }
+    return this.block;
+  }
+
   async getVersion() {
     return this.contract.methods.version().call({ from: this.account });
   }
@@ -124,13 +133,21 @@ export class Web3Service {
     }));
   }
 
+  async getIsAuthority() {
+    if (this.isAuthority === null) {
+      const authorities =
+        (await this.contract.methods.getAuthorities().call({
+          from: this.account
+        })) || [];
+      this.isAuthority = authorities.includes(this.account);
+    }
+    return this.isAuthority;
+  }
+
   async getAuthorityState() {
     const data = await this.contract.methods
       .getAuthorityState(this.account)
-      .call({
-        from: this.account,
-        gas: 0
-      });
+      .call({ from: this.account });
     if (!data) return;
     return {
       votes: Number(data[0]),

@@ -29,6 +29,10 @@ $font-family: 'Lekton', Helvetica, sans-serif;
 
 * {
   box-sizing: border-box;
+
+  &:focus {
+    //outline-style: dotted;
+  }
 }
 
 html,

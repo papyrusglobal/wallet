@@ -11,19 +11,18 @@ export default new Router({
       path: '/',
       name: 'staking',
       component: () =>
-        import(/* webpackChunkName: "staking" */ './views/Staking.vue')
+        import(/* webpackChunkName: "staking" */ './views/Staking')
     },
     {
       path: '/voting',
       name: 'voting',
-      component: () =>
-        import(/* webpackChunkName: "voting" */ './views/Voting.vue')
+      component: () => import(/* webpackChunkName: "voting" */ './views/Voting')
     },
     {
       path: '*',
       name: 'err',
       component: () =>
-        import(/* webpackChunkName: "voting" */ './views/NotFound.vue')
+        import(/* webpackChunkName: "voting" */ './views/NotFound')
     }
   ]
 });

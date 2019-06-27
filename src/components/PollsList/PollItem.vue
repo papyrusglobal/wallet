@@ -4,16 +4,16 @@
     :class="{
       '--inactive': isInactive,
       '--disabled': disabled,
-      '--has-votes': authority.votes > 0,
+      '--has-votes': poll.votes > 0,
       '--voted': isVoted
     }"
-    @click="!isInactive && !disabled && $emit('select', authority.address)"
+    @click="!isInactive && !disabled && $emit('select', poll.address)"
   >
-    <Avatar :hash="authority.address" size="40" class="PollItem__avatar" />
+    <Avatar :hash="poll.address" size="40" class="PollItem__avatar" />
     <div class="PollItem__text">
-      <span class="text-overflow">{{ authority.address }}</span>
+      <span class="text-overflow">{{ poll.address }}</span>
       <span class="PollItem__votes">
-        {{ authority.votes }} vote{{ authority.votes === 1 ? '' : 's' }}
+        {{ poll.votes }} vote{{ poll.votes === 1 ? '' : 's' }}
       </span>
       <span class="PollItem__due"
         >&rsaquo; {{ timeLeft | millisecondsToWords('closed') }}</span
@@ -34,7 +34,7 @@ export default {
     millisecondsToWords
   },
   props: {
-    authority: {
+    poll: {
       type: Object,
       required: true
     },
@@ -48,19 +48,20 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['votedAddresses']),
     isVoted() {
       return (
-        !!this.authority.voted ||
-        this.votedAddresses.includes(this.authority.address)
+        !!this.poll.voted ||
+        (!('voted' in this.poll) &&
+          this.votedAddresses.includes(this.poll.address))
       );
     },
     timeLeft() {
-      return this.authority.timestamp * 1000 - this.now;
+      return this.poll.timestamp * 1000 - this.now;
     },
     isInactive() {
       return this.timeLeft <= 0;
-    },
-    ...mapGetters(['votedAddresses'])
+    }
   }
 };
 </script>

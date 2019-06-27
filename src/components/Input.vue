@@ -20,6 +20,9 @@
       @blur="focused = false"
       @input="$emit('changing', $event.target.value)"
     />
+    <div v-if="errorText" class="Input__error-text">
+      {{ errorText }}
+    </div>
   </div>
 </template>
 
@@ -38,6 +41,10 @@ export default {
     error: {
       type: Boolean,
       default: false
+    },
+    errorText: {
+      type: [Boolean, String],
+      default: null
     },
     label: {
       type: String,
@@ -60,7 +67,6 @@ export default {
   &__field {
     padding: 20px 16px 18px;
     border: 1px solid var(--input-border);
-    outline: none;
 
     &:focus {
       border-color: var(--light-blue);
@@ -76,6 +82,13 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     max-width: 100%;
+  }
+
+  &__error-text {
+    text-align: left;
+    color: var(--red);
+    font-size: 0.9rem;
+    margin: 4px 0;
   }
 
   &.--focused {
@@ -96,6 +109,7 @@ export default {
       color: var(--red);
     }
     #{$parent}__field {
+      outline-color: var(--red);
       border-color: var(--red);
     }
   }

@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { parseEnvVariable } from '@/utils/env';
 
 let timer;
@@ -12,12 +11,13 @@ export const state = () => ({
   limit: 0,
   allStakes: 0,
   freezedStakes: [],
-  authorities: {
+  polls: {
     new: [],
     blacklist: []
   },
   authorityState: {
     loaded: false,
+    isAuthority: false,
     votes: undefined,
     slots: Array(7).fill(0)
   }
@@ -34,7 +34,7 @@ export const getters = {
   hasFreezedStakes: state => state.freezedStakes.length > 0,
   votedAddresses: state => state.authorityState.slots.map(slot => slot.address),
   isAuthorityStateLoaded: ({ authorityState }) => authorityState.loaded,
-  isAuthority: ({ authorityState }) => authorityState.votes !== undefined
+  isAuthority: ({ authorityState }) => authorityState.isAuthority
 };
 
 export const mutations = {
@@ -52,18 +52,15 @@ export const mutations = {
   setFreezedStakes(state, freezedStakes) {
     state.freezedStakes = freezedStakes;
   },
-  setAuthorities(state, { addresses, blacklistAddresses }) {
-    state.authorities = {
+  setPolls(state, { addresses, blacklistAddresses }) {
+    state.polls = {
       new: addresses.reverse(),
       blacklist: blacklistAddresses.reverse()
     };
   },
   setAuthorityState(state, authorityState) {
-    if (authorityState === undefined) {
-      Vue.set(state.authorityState, 'loaded', true);
-      return;
-    }
     state.authorityState = {
+      ...state.authorityState,
       loaded: true,
       ...authorityState
     };
@@ -127,12 +124,18 @@ export const actions = {
       this.$service.getAddNewPollAddresses(),
       this.$service.getAuthorityBlacklistPollAddresses()
     ]);
-    commit('setAuthorities', { addresses, blacklistAddresses });
+    commit('setPolls', { addresses, blacklistAddresses });
   },
 
   async loadAuthorityState({ commit }) {
-    const authorityState = await this.$service.getAuthorityState();
-    commit('setAuthorityState', authorityState);
+    const [state, isAuthority] = await Promise.all([
+      this.$service.getAuthorityState(),
+      this.$service.getIsAuthority()
+    ]);
+    commit('setAuthorityState', {
+      isAuthority,
+      ...(state || {})
+    });
   },
 
   async dropClosedPolls({ dispatch }) {

@@ -1,10 +1,10 @@
 <template>
   <ul class="PollsList">
-    <template v-if="authorities.length">
+    <template v-if="polls.length">
       <PollItem
-        v-for="authority in authorities"
-        :key="authority.address"
-        :authority="authority"
+        v-for="poll in polls"
+        :key="poll.address"
+        :poll="poll"
         :disabled="disabled"
         :now="now"
         @select="!disabled && $emit('select', $event)"
@@ -27,7 +27,7 @@ export default {
   components: { PollItem },
   mixins: [setNowMixin],
   props: {
-    authorities: {
+    polls: {
       type: Array,
       default: () => []
     },

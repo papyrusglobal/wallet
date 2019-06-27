@@ -25,14 +25,13 @@
           :label="`Wei to ${action}`"
         />
         <Input
-          v-model="gas"
+          :value="gas"
           full-width
           type="number"
           min="0"
           style="flex-basis: 50%; margin-left: 8px;"
-          :max="isUnstakeAction ? stake : null"
           class="mb-4"
-          :error="amountHasError"
+          readonly
           :disabled="staking"
           :label="`Gas you ${action === 'stake' ? 'get' : 'pay'}`"
         />
@@ -79,17 +78,32 @@ export default {
     Input
   },
   data() {
-    const { action, amount } = this.$route.query;
+    const { action } = this.$route.query;
     return {
       staking: false,
       action: ['stake', 'unstake'].includes(action) ? action : 'stake',
-      amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null
+      // amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null,
+      amount: null,
+      blockGasLimit: 1
     };
   },
-  mounted() {
+  async created() {
+    let timeout;
+    const loadBlock = async () => {
+      this.blockGasLimit = (await this.$service.getLatestBlock()).gasLimit;
+      timeout = setTimeout(loadBlock, 1000);
+    };
+    await loadBlock();
+    this.$on('hook:beforeDestroy', () => {
+      clearTimeout(timeout);
+    });
+  },
+  async mounted() {
     this.$store.dispatch('loadFreezedStakes');
   },
   computed: {
+    ...mapState(['account', 'stake', 'allStakes', 'freezedStakes']),
+    ...mapGetters(['hasFreezedStakes']),
     isUnstakeAction() {
       return this.action === 'unstake';
     },
@@ -98,18 +112,23 @@ export default {
     },
     gas: {
       get() {
-        return this.amount
-          ? new BigNumber(this.amount).multipliedBy(10000).toNumber()
-          : null;
-      },
-      set(value) {
-        this.amount = value
-          ? new BigNumber(value).dividedBy(10000).toNumber()
-          : null;
+        if (!this.amount) return null;
+        const wei = new BigNumber(this.amount);
+        const gas = wei
+          .multipliedBy(this.blockGasLimit)
+          .multipliedBy((24 * 60 * 60) / 3)
+          .dividedBy(this.allStakes + wei);
+        return gas.toNumber();
       }
-    },
-    ...mapState(['account', 'stake', 'freezedStakes']),
-    ...mapGetters(['hasFreezedStakes'])
+      // set(value) {
+      //   if (!value) return null;
+      //   const gas = new BigNumber(value);
+      //   this.amount = gas
+      //     .multipliedBy(this.allStakes + 3)
+      //     .dividedBy(this.block.gasLimit)
+      //     .dividedBy((24 * 60 * 60) / 3);
+      // }
+    }
   },
   methods: {
     async submit() {

@@ -74,10 +74,10 @@ export default {
   background-size: 24px;
   background-position: right 16px center;
   border-radius: 0;
-  outline: none;
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
+  /*outline: none;*/
 
   &:focus {
     border-color: var(--light-blue);
