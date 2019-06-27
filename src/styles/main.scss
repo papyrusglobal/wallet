@@ -30,8 +30,13 @@ $font-family: 'Lekton', Helvetica, sans-serif;
 * {
   box-sizing: border-box;
 
+  &::selection {
+    background: var(--blue);
+    color: var(--white);
+  }
+
   &:focus {
-    //outline-style: dotted;
+    outline-color: var(--light-blue);
   }
 }
 

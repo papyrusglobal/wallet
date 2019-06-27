@@ -6,7 +6,7 @@
     </h2>
     <span class="AccountInfo__balance" @click="showEth = !showEth">
       <template v-if="showEth">
-        ~{{ balance | toEther | formatPrice }} ETH
+        ~{{ balance | toEther | formatPrice }} PPR
       </template>
       <template v-else>
         {{ balance | formatPrice(10) }} wei

@@ -78,7 +78,7 @@ export default {
   min-width: 88px;
   cursor: pointer;
   user-select: none;
-  transition: all 300ms ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 
   .Button__spinner {
     position: absolute;

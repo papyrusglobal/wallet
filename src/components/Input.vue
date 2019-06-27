@@ -67,6 +67,7 @@ export default {
   &__field {
     padding: 20px 16px 18px;
     border: 1px solid var(--input-border);
+    transition: border 0.25s;
 
     &:focus {
       border-color: var(--light-blue);

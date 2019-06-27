@@ -188,6 +188,7 @@ export default {
         this.isAuthority &&
         !this.submitting &&
         !this.hasAddressError &&
+        !this.hasPollAddressError &&
         fields.every(
           field =>
             this[field] !== null &&
@@ -261,7 +262,7 @@ export default {
       this.timer = setTimeout(this.load, 5000);
     },
     async submit() {
-      if (!this.isAuthority || this.submitting) return;
+      if (!this.canSubmit) return;
       const { value: method } = this.action;
       this.submitting = true;
       try {
