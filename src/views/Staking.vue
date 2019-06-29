@@ -47,7 +47,7 @@
           class="mb-4"
           readonly
           :disabled="staking"
-          :label="`Gas you ${action === 'stake' ? 'receive' : 'pay'}`"
+          :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
         />
       </div>
       <Input
