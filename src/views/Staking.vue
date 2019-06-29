@@ -2,6 +2,7 @@
   <div class="Staking">
     <CardSeparator />
     <v-tour
+      v-if="$options.tourSteps.length"
       name="StakingTour"
       :steps="$options.tourSteps"
       :callbacks="{ onStop: onTourStop }"
@@ -154,21 +155,21 @@ export default {
     }
   },
   tourSteps: [
-    {
-      target: '#step-1',
-      content: 'Step 1'
-    },
-    {
-      target: '#step-2',
-      content: 'Step 2'
-    },
-    {
-      target: '#step-3',
-      content: 'Step 3',
-      params: {
-        placement: 'top'
-      }
-    }
+    // {
+    //   target: '#step-1',
+    //   content: 'Step 1'
+    // },
+    // {
+    //   target: '#step-2',
+    //   content: 'Step 2'
+    // },
+    // {
+    //   target: '#step-3',
+    //   content: 'Step 3',
+    //   params: {
+    //     placement: 'top'
+    //   }
+    // }
   ]
 };
 </script>
