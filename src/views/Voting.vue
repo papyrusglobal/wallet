@@ -69,6 +69,7 @@
         @select="onSelectAuthority"
       />
       <Button
+        v-tooltip="''"
         outline
         full-width
         small

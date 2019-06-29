@@ -34,6 +34,7 @@ export default {
     prop: 'value',
     event: 'input'
   },
+  inheritAttrs: false,
   mixins: [fullWidthMixin],
   props: {
     value: {},
@@ -55,6 +56,9 @@ export default {
       focused: false
     };
   },
+  mounted() {
+
+  },
   computed: {
     listeners() {
       return {
@@ -63,16 +67,6 @@ export default {
           this.$emit('input', event.target.value);
         }
       };
-    }
-  },
-  methods: {
-    onFocus(event) {
-      this.$emit('focus', event);
-      this.focused = true;
-    },
-    onBlur(event) {
-      this.$emit('blur', event);
-      this.focused = false;
     }
   }
 };
