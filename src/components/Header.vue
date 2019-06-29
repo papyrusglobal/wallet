@@ -1,7 +1,7 @@
 <template>
   <div class="Header">
     <router-link to="/">
-      <img src="/logo.svg" width="176" height="40" />
+      <img src="/logo.svg" width="176" height="40" id="step-1" />
     </router-link>
   </div>
 </template>

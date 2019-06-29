@@ -4,7 +4,7 @@
     <h2 class="AccountInfo__address text-overflow" :title="account">
       {{ account }}
     </h2>
-    <span class="AccountInfo__balance" @click="showEth = !showEth">
+    <span class="AccountInfo__balance" @click="showEth = !showEth" id="step-2">
       <template v-if="showEth">
         {{ balance | toEther | formatPrice }} PPR
       </template>
@@ -13,15 +13,15 @@
       </template>
     </span>
     <div class="AccountInfo__stakes">
-      <div>
+      <div id="step-3">
         <h5>My stake</h5>
         {{ stake | formatPrice }} wei
       </div>
-      <div>
+      <div id="step-4">
         <h5>My limit</h5>
         {{ limit | formatPrice }} gas
       </div>
-      <div>
+      <div id="step-5">
         <h5>All stakes</h5>
         {{ allStakes | formatPrice }} wei
       </div>

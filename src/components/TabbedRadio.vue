@@ -3,6 +3,7 @@
     <div
       v-for="option in options"
       :key="option.value"
+      :id="option.id"
       class="TabbedRadio__item"
       :class="{ '--disabled': option.disabled }"
       :tabindex="option.disabled ? -1 : 0"

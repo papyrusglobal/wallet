@@ -5,22 +5,26 @@
       v-if="$options.tourSteps.length"
       name="StakingTour"
       :steps="$options.tourSteps"
-      :callbacks="{ onStop: onTourStop }"
+      :callbacks="{
+        onStop: onTourStop,
+        onPreviousStep: index => onTourChange(index, true),
+        onNextStep: onTourChange
+      }"
     />
     <form @submit.prevent="submit">
       <TabbedRadio
         v-model="action"
+        id="step-6"
         name="action"
         :options="[
           { label: 'Stake', value: 'stake' },
-          { label: 'Unstake', value: 'unstake' }
+          { label: 'Unstake', value: 'unstake', id: 'step-8' }
         ]"
         class="mb-5"
       />
       <div style="display: flex;">
         <Input
           v-model.number="amount"
-          id="step-1"
           full-width
           type="number"
           min="0"
@@ -48,6 +52,7 @@
       </div>
       <Input
         full-width
+        id="step-7"
         type="text"
         readonly
         :value="account"
@@ -55,7 +60,6 @@
         label="To address"
       />
       <Button
-        id="step-2"
         full-width
         :disabled="!amount || amountHasError"
         :loading="staking"
@@ -63,9 +67,9 @@
         {{ action }}
       </Button>
     </form>
-    <div v-if="hasFreezedStakes">
+    <div>
       <CardSeparator />
-      <FreezedStakes id="step-3" :stakes="freezedStakes" />
+      <FreezedStakes id="step-9" :stakes="freezedStakes" />
     </div>
   </div>
 </template>
@@ -150,26 +154,80 @@ export default {
         this.staking = false;
       }
     },
+    onTourChange(index, previous = false) {
+      if (index === (previous ? 8 : 6)) {
+        this.action = 'unstake';
+      } else {
+        this.action = 'stake';
+      }
+    },
     onTourStop() {
+      this.action = 'stake';
       ls.setItem('StakingTourFinished', 1);
     }
   },
   tourSteps: [
-    // {
-    //   target: '#step-1',
-    //   content: 'Step 1'
-    // },
-    // {
-    //   target: '#step-2',
-    //   content: 'Step 2'
-    // },
-    // {
-    //   target: '#step-3',
-    //   content: 'Step 3',
-    //   params: {
-    //     placement: 'top'
-    //   }
-    // }
+    {
+      target: '#step-1',
+      content:
+        '<h3 class="mt-0 mb-3">Welcome to the papyrus wallet!</h3>' +
+        'Papyrus Wallet works with MetaMask extension and gives you a particularly user-friendly interface for all features of Papyrus Network'
+    },
+    {
+      target: '#step-2',
+      content:
+        'On this screen you can see four main parameters — your current balance'
+    },
+    {
+      target: '#step-3',
+      content:
+        'Your staked PRP tokens that gives you access to the Papyrus Network infrastructure',
+      params: {
+        placement: 'top'
+      }
+    },
+    {
+      target: '#step-4',
+      content:
+        'Derivative of your stakes - your GasLimit provided to you for three days',
+      params: {
+        placement: 'top'
+      }
+    },
+    {
+      target: '#step-5',
+      content: 'All the stakes in the system',
+      params: {
+        placement: 'top'
+      }
+    },
+    {
+      target: '#step-6',
+      content:
+        'To stake your tokens just chose staking tab and then fill the fields with stakes and press Stake button',
+      params: {
+        placement: 'top'
+      }
+    },
+    {
+      target: '#step-7',
+      content:
+        'By default - stake will be processed onto your address, function to delegate stakes is in-progress now and will be available soon'
+    },
+    {
+      target: '#step-8',
+      content:
+        'You can easily unstake your tokens, just go to the Unstake tab and enter value for unstaking',
+      params: {
+        placement: 'top'
+      }
+    },
+    {
+      target: '#step-9',
+      content:
+        'When unstaking is done your tokens are frozen and you have to wait for some time to process with withdraw.' +
+        '<div class="mt-2">When withdraw button is available - just push the button and your stakes will be back to your balance!</div>'
+    }
   ]
 };
 </script>
