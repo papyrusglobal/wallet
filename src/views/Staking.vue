@@ -33,7 +33,11 @@
             style="flex-basis: 100%; margin-right: 8px;"
             :error="amountHasError"
             :error-text="
-              !!amount && gas < 1 ? 'You should release at least 1 gas' : null
+              !!amount && gas < 1
+                ? `You should ${
+                    isUnstakeAction ? 'release' : 'get'
+                  } at least 1 gas`
+                : null
             "
             :disabled="staking"
             :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
@@ -52,9 +56,10 @@
             :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
           />
         </div>
-        <SlidingInfo v-if="gas >= 1">
-          It will <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong> your gas
-          limit at <strong>{{ gas }} gas</strong> per 3 days
+        <SlidingInfo v-if="!!amount && !amountHasError">
+          It will
+          <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong>
+          your gas limit at <strong>{{ gas }} gas</strong> per 3 days
         </SlidingInfo>
       </div>
       <Input
