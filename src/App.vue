@@ -18,8 +18,12 @@
       >
     </MetamaskError>
     <MetamaskError v-else-if="!hasPapyrusNetwork">
-      Your web3 uses <strong>#{{ connectedNetwork }}</strong> network. Please
-      choose Papyrus network in metamask.
+      Please choose Papyrus network in metamask.
+      <p style="font-size: 1rem; line-height: 1.4rem; font-weight: normal;">
+        To do that you need to choose Networks tab in metamask and then select
+        Custom PRC and fill in New RPC URL field with<br>
+        <span style="background-color: var(--white); padding: 0 4px;">https://gateway-testnet.papyrus.network</span>
+      </p>
       <Button slot="action" @click="connectToMetamask" :loading="loading"
         >Retry</Button
       >

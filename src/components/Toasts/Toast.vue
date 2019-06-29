@@ -101,6 +101,7 @@ export default {
   background: var(--blue);
   text-align: center;
   cursor: pointer;
+  z-index: 1000;
 
   &.--error {
     background: var(--red);

@@ -164,6 +164,11 @@ export default {
       if (!next.fields.includes('vote')) {
         this.vote = null;
       }
+      if (next.value.toLowerCase().indexOf('blacklist') > -1) {
+        this.type = 'blacklist';
+      } else {
+        this.type = 'new';
+      }
     }
   },
   computed: {

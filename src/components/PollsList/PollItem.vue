@@ -13,10 +13,16 @@
     <div class="PollItem__text">
       <span class="text-overflow">{{ poll.address }}</span>
       <span class="PollItem__votes">
-        {{ poll.votes }} vote{{ poll.votes === 1 ? '' : 's' }}
+        {{ poll.votes }}/{{ $options.votesToWin }} votes
       </span>
       <span class="PollItem__due"
-        >&rsaquo; {{ timeLeft | millisecondsToWords('closed') }}</span
+        >&rsaquo;
+        {{
+          timeLeft
+            | millisecondsToWords(
+              +poll.votes >= $options.votesToWin ? 'added' : 'declined'
+            )
+        }}</span
       >
     </div>
   </li>
@@ -62,7 +68,8 @@ export default {
     isInactive() {
       return this.timeLeft <= 0;
     }
-  }
+  },
+  votesToWin: +process.env.VUE_APP_VOTES_TO_WIN || 3
 };
 </script>
 
@@ -88,7 +95,7 @@ export default {
   }
 
   &.--inactive {
-    opacity: 0.57;
+    opacity: 0.64;
   }
 
   &:not(.--inactive):not(.--disabled) {
