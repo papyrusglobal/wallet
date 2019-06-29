@@ -1,10 +1,12 @@
 import Vue from 'vue';
 import { VTooltip } from 'v-tooltip';
+import VueTour from 'vue-tour';
 import App from './App.vue';
 import router from './router';
 import createStore from './store';
 import Toasts from './components/Toasts';
 import './styles/main.scss';
+// import 'vue-tour/dist/vue-tour.css';
 
 Vue.config.productionTip = false;
 
@@ -18,6 +20,7 @@ async function startApp() {
 
   Vue.use(Toasts, { store });
   Vue.directive('tooltip', VTooltip);
+  Vue.use(VueTour);
 
   new Vue({
     router,

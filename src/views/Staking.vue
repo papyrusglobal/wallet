@@ -1,6 +1,11 @@
 <template>
   <div class="Staking">
     <CardSeparator />
+    <v-tour
+      name="StakingTour"
+      :steps="$options.tourSteps"
+      :callbacks="{ onStop: onTourStop }"
+    />
     <form @submit.prevent="submit">
       <TabbedRadio
         v-model="action"
@@ -14,6 +19,7 @@
       <div style="display: flex;">
         <Input
           v-model.number="amount"
+          id="step-1"
           full-width
           type="number"
           min="0"
@@ -48,6 +54,7 @@
         label="To address"
       />
       <Button
+        id="step-2"
         full-width
         :disabled="!amount || amountHasError"
         :loading="staking"
@@ -57,7 +64,7 @@
     </form>
     <div v-if="hasFreezedStakes">
       <CardSeparator />
-      <FreezedStakes :stakes="freezedStakes" />
+      <FreezedStakes id="step-3" :stakes="freezedStakes" />
     </div>
   </div>
 </template>
@@ -65,6 +72,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
+import * as ls from '@/utils/storage';
 import CardSeparator from '@/components/CardSeparator';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
@@ -81,12 +89,11 @@ export default {
     Input
   },
   data() {
-    const { action } = this.$route.query;
+    const { action, amount } = this.$route.query;
     return {
       staking: false,
       action: ['stake', 'unstake'].includes(action) ? action : 'stake',
-      // amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null,
-      amount: null,
+      amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null,
       blockGasLimit: 1
     };
   },
@@ -103,6 +110,9 @@ export default {
   },
   async mounted() {
     this.$store.dispatch('loadFreezedStakes');
+    if (+ls.getItem('StakingTourFinished') !== 1) {
+      this.$tours['StakingTour'].start();
+    }
   },
   computed: {
     ...mapState(['account', 'stake', 'allStakes', 'freezedStakes']),
@@ -123,14 +133,6 @@ export default {
           .dividedBy(this.allStakes + wei);
         return gas.toNumber();
       }
-      // set(value) {
-      //   if (!value) return null;
-      //   const gas = new BigNumber(value);
-      //   this.amount = gas
-      //     .multipliedBy(this.allStakes + 3)
-      //     .dividedBy(this.block.gasLimit)
-      //     .dividedBy((24 * 60 * 60) / 3);
-      // }
     }
   },
   methods: {
@@ -146,7 +148,27 @@ export default {
       } finally {
         this.staking = false;
       }
+    },
+    onTourStop() {
+      ls.setItem('StakingTourFinished', 1);
     }
-  }
+  },
+  tourSteps: [
+    {
+      target: '#step-1',
+      content: 'Step 1'
+    },
+    {
+      target: '#step-2',
+      content: 'Step 2'
+    },
+    {
+      target: '#step-3',
+      content: 'Step 3',
+      params: {
+        placement: 'top'
+      }
+    }
+  ]
 };
 </script>
