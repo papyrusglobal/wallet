@@ -37,7 +37,7 @@
         />
         <Input
           v-tooltip="
-            'gas = wei * block gas limit * ((24 * 60 * 60) / 3) / (all stakes + wei)'
+            'gas = wei * block gas limit * (24 * 60 * 60) / (all stakes + wei)'
           "
           :value="gas"
           full-width
@@ -126,7 +126,11 @@ export default {
       return this.action === 'unstake';
     },
     amountHasError() {
-      return this.isUnstakeAction && this.amount > Number(this.stake);
+      if (!this.amount) return null;
+      if (!this.isUnstakeAction) {
+        return this.gas < 1;
+      }
+      return this.gas < 1 || this.amount > Number(this.stake);
     },
     gas: {
       get() {
@@ -134,8 +138,8 @@ export default {
         const wei = new BigNumber(this.amount);
         const gas = wei
           .multipliedBy(this.blockGasLimit)
-          .multipliedBy((24 * 60 * 60) / 3)
-          .dividedBy(this.allStakes + wei);
+          .multipliedBy(24 * 60 * 60)
+          .dividedBy(new BigNumber(this.allStakes).plus(wei));
         return gas.toNumber();
       }
     }
@@ -145,7 +149,7 @@ export default {
       if (!this.amount || this.amountHasError) return;
       this.staking = true;
       try {
-        const hash = await this.$store.dispatch(this.action, this.amount);
+        const hash = await this.$store.dispatch(this.action, String(this.amount));
         this.$toast.info(`Transaction #${hash} is being sent to the network`);
         this.amount = null;
       } catch (err) {

@@ -6,7 +6,7 @@
     </h2>
     <span class="AccountInfo__balance" @click="showEth = !showEth" id="step-2">
       <template v-if="showEth">
-        {{ balance | toEther | formatPrice }} PPR
+        {{ balance | toEther }} PPR
       </template>
       <template v-else>
         {{ balance | formatPrice(10) }} wei
@@ -31,6 +31,7 @@
 
 <script>
 import numbro from 'numbro';
+import BigNumber from 'bignumber.js';
 import { mapState } from 'vuex';
 import { ETHER } from '@/constants';
 import Avatar from '@/components/Avatar';
@@ -45,7 +46,7 @@ export default {
   },
   filters: {
     toEther(value) {
-      return value / ETHER;
+      return (new BigNumber(value)).dividedBy(ETHER);
     },
     formatPrice(value, totalLength = 6) {
       return value

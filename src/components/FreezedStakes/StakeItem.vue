@@ -27,7 +27,7 @@
 import { millisecondsToWords } from '@/utils/filters';
 import Button from '@/components/Button';
 
-const WITHDRAW_CONSTANT_TIME = 2 * 60 * 1000;
+const TIME = Number(process.env.VUE_APP_WITHDRAW_CONSTANT_TIME) || 0;
 
 export default {
   name: 'StakeItem',
@@ -57,7 +57,7 @@ export default {
   },
   computed: {
     timeLeft() {
-      return WITHDRAW_CONSTANT_TIME + this.stake.timestamp * 1000 - this.now;
+      return TIME + this.stake.timestamp * 1000 - this.now;
     },
     isDisabledWithdraw() {
       return this.timeLeft > 0 || this.transactionSent;
