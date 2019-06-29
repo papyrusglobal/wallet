@@ -22,9 +22,12 @@
           style="flex-basis: 50%; margin-right: 8px;"
           :error="amountHasError"
           :disabled="staking"
-          :label="`Wei to ${action}`"
+          :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
         />
         <Input
+          v-tooltip="
+            'gas = wei * block gas limit * ((24 * 60 * 60) / 3) / (all stakes + wei)'
+          "
           :value="gas"
           full-width
           type="number"
@@ -33,7 +36,7 @@
           class="mb-4"
           readonly
           :disabled="staking"
-          :label="`Gas you ${action === 'stake' ? 'get' : 'pay'}`"
+          :label="`Gas you ${action === 'stake' ? 'receive' : 'pay'}`"
         />
       </div>
       <Input

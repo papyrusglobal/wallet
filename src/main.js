@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { VTooltip } from 'v-tooltip';
 import App from './App.vue';
 import router from './router';
 import createStore from './store';
@@ -16,6 +17,7 @@ async function startApp() {
   const store = createStore();
 
   Vue.use(Toasts, { store });
+  Vue.directive('tooltip', VTooltip);
 
   new Vue({
     router,

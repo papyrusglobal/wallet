@@ -13,12 +13,11 @@
     </label>
     <input
       :value="value"
-      v-bind="$attrs"
       class="Input__field"
-      v-on="$listeners"
+      v-bind="$attrs"
+      v-on="listeners"
       @focus="focused = true"
       @blur="focused = false"
-      @input="$emit('changing', $event.target.value)"
     />
     <div v-if="errorText" class="Input__error-text">
       {{ errorText }}
@@ -33,7 +32,7 @@ export default {
   name: 'Input',
   model: {
     prop: 'value',
-    event: 'changing'
+    event: 'input'
   },
   mixins: [fullWidthMixin],
   props: {
@@ -55,6 +54,26 @@ export default {
     return {
       focused: false
     };
+  },
+  computed: {
+    listeners() {
+      return {
+        ...this.$listeners,
+        input: event => {
+          this.$emit('input', event.target.value);
+        }
+      };
+    }
+  },
+  methods: {
+    onFocus(event) {
+      this.$emit('focus', event);
+      this.focused = true;
+    },
+    onBlur(event) {
+      this.$emit('blur', event);
+      this.focused = false;
+    }
   }
 };
 </script>
