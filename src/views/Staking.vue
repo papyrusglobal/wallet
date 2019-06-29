@@ -22,38 +22,40 @@
         ]"
         class="mb-5"
       />
-      <div style="display: flex;">
-        <Input
-          v-model.number="amount"
-          full-width
-          type="number"
-          min="0"
-          :max="isUnstakeAction ? stake : null"
-          class="mb-4"
-          style="flex-basis: 100%;"
-          :style="{ 'margin-right': action === 'stake' ? '8px' : '0' }"
-          :error="amountHasError"
-          :error-text="
-            !!amount && gas < 1 ? 'You should release at least 1 gas' : null
-          "
-          :disabled="staking"
-          :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
-        />
-        <Input
-          v-if="action === 'stake'"
-          v-tooltip="
-            'gas = wei * block gas limit * (24 * 60 * 60) / (all stakes + wei)'
-          "
-          :value="gas"
-          full-width
-          type="number"
-          min="0"
-          style="flex-basis: 100%; margin-left: 8px;"
-          class="mb-4"
-          readonly
-          :disabled="staking"
-          :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
-        />
+      <div class="mb-4">
+        <div style="display: flex;">
+          <Input
+            v-model.number="amount"
+            full-width
+            type="number"
+            min="0"
+            :max="isUnstakeAction ? stake : null"
+            style="flex-basis: 100%; margin-right: 8px;"
+            :error="amountHasError"
+            :error-text="
+              !!amount && gas < 1 ? 'You should release at least 1 gas' : null
+            "
+            :disabled="staking"
+            :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
+          />
+          <Input
+            v-tooltip="
+              'gas = wei * block gas limit * (24 * 60 * 60) / (all stakes + wei)'
+            "
+            :value="gas"
+            full-width
+            type="number"
+            min="0"
+            style="flex-basis: 100%; margin-left: 8px;"
+            readonly
+            :disabled="staking"
+            :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
+          />
+        </div>
+        <SlidingInfo v-if="gas >= 1">
+          It will <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong> your gas
+          limit at <strong>{{ gas }} gas</strong> per 3 days
+        </SlidingInfo>
       </div>
       <Input
         full-width
@@ -88,10 +90,12 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import FreezedStakes from '@/components/FreezedStakes';
 import TabbedRadio from '@/components/TabbedRadio';
+import SlidingInfo from '@/components/SlidingInfo';
 
 export default {
   name: 'Staking',
   components: {
+    SlidingInfo,
     TabbedRadio,
     FreezedStakes,
     Button,

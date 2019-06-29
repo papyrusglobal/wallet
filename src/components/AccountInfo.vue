@@ -46,7 +46,7 @@ export default {
   },
   filters: {
     toEther(value) {
-      return (new BigNumber(value)).dividedBy(ETHER);
+      return new BigNumber(value).dividedBy(ETHER);
     },
     formatPrice(value, totalLength = 6) {
       return value

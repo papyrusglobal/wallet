@@ -56,9 +56,6 @@ export default {
       focused: false
     };
   },
-  mounted() {
-
-  },
   computed: {
     listeners() {
       return {
