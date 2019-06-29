@@ -181,7 +181,7 @@ export default {
     {
       target: '#step-3',
       content:
-        'Your staked PRP tokens that gives you access to the Papyrus Network infrastructure',
+        'Your staked PPR tokens that gives you access to the Papyrus Network infrastructure',
       params: {
         placement: 'top'
       }
