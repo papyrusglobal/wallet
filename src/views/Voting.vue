@@ -69,7 +69,12 @@
         @select="onSelectAuthority"
       />
       <Button
-        v-tooltip="''"
+        v-tooltip="
+          'When voting is completed its results should be pushed to the network via' +
+            'the new transaction and this button is doing that. Anyone can use this button' +
+            'and push voting results to network, however nothing will be pushed if voting' +
+            'is not completed yet, and transaction will only be triggered when voting is completed'
+        "
         outline
         full-width
         small
