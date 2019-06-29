@@ -125,15 +125,15 @@ const choices = [
     value: 'voteForBlackListAuthority',
     type: 'vote',
     fields: ['address']
-  },
-  {
-    title: 'Propose a poll for changing BIOS contract',
-    disabled: true
-  },
-  {
-    title: 'Vote for changing BIOS contract',
-    disabled: true
   }
+  // {
+  //   title: 'Propose a poll for changing BIOS contract',
+  //   disabled: true
+  // },
+  // {
+  //   title: 'Vote for changing BIOS contract',
+  //   disabled: true
+  // }
 ];
 
 export default {

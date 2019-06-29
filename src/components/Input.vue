@@ -101,8 +101,9 @@ export default {
   &__error-text {
     text-align: left;
     color: var(--red);
+    line-height: 1.2rem;
     font-size: 0.9rem;
-    margin: 4px 0;
+    margin: 8px 0;
   }
 
   &.--focused {

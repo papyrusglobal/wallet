@@ -30,12 +30,17 @@
           min="0"
           :max="isUnstakeAction ? stake : null"
           class="mb-4"
-          style="flex-basis: 50%; margin-right: 8px;"
+          style="flex-basis: 100%;"
+          :style="{ 'margin-right': action === 'stake' ? '8px' : '0' }"
           :error="amountHasError"
+          :error-text="
+            !!amount && gas < 1 ? 'You should release at least 1 gas' : null
+          "
           :disabled="staking"
           :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
         />
         <Input
+          v-if="action === 'stake'"
           v-tooltip="
             'gas = wei * block gas limit * (24 * 60 * 60) / (all stakes + wei)'
           "
@@ -43,7 +48,7 @@
           full-width
           type="number"
           min="0"
-          style="flex-basis: 50%; margin-left: 8px;"
+          style="flex-basis: 100%; margin-left: 8px;"
           class="mb-4"
           readonly
           :disabled="staking"
@@ -140,7 +145,7 @@ export default {
           .multipliedBy(this.blockGasLimit)
           .multipliedBy(24 * 60 * 60)
           .dividedBy(new BigNumber(this.allStakes).plus(wei));
-        return gas.toNumber();
+        return gas.integerValue(BigNumber.ROUND_DOWN).toString();
       }
     }
   },
@@ -149,7 +154,10 @@ export default {
       if (!this.amount || this.amountHasError) return;
       this.staking = true;
       try {
-        const hash = await this.$store.dispatch(this.action, String(this.amount));
+        const hash = await this.$store.dispatch(
+          this.action,
+          String(this.amount)
+        );
         this.$toast.info(`Transaction #${hash} is being sent to the network`);
         this.amount = null;
       } catch (err) {
