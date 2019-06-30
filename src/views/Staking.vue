@@ -25,7 +25,7 @@
       <div class="mb-4">
         <div style="display: flex;">
           <Input
-            v-model.number="amount"
+            v-model="amount"
             full-width
             type="number"
             min="0"
@@ -33,7 +33,7 @@
             style="flex-basis: 100%; margin-right: 8px;"
             :error="amountHasError"
             :error-text="
-              !!amount && gas < 1
+              !!+amount && gas < 1
                 ? `You should ${
                     isUnstakeAction ? 'release' : 'get'
                   } at least 1 gas`
@@ -48,7 +48,6 @@
             "
             :value="gas"
             full-width
-            type="number"
             min="0"
             style="flex-basis: 100%; margin-left: 8px;"
             readonly
@@ -56,7 +55,7 @@
             :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
           />
         </div>
-        <SlidingInfo v-if="!!amount && !amountHasError">
+        <SlidingInfo v-if="!!+amount && !amountHasError">
           It will
           <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong>
           your gas limit at <strong>{{ gas }} gas</strong> per 3 days
@@ -73,7 +72,7 @@
       />
       <Button
         full-width
-        :disabled="!amount || amountHasError"
+        :disabled="!+amount || amountHasError"
         :loading="staking"
       >
         {{ action }}
@@ -140,15 +139,15 @@ export default {
       return this.action === 'unstake';
     },
     amountHasError() {
-      if (!this.amount) return null;
+      if (!+this.amount) return null;
       if (!this.isUnstakeAction) {
         return this.gas < 1;
       }
-      return this.gas < 1 || this.amount > Number(this.stake);
+      return this.gas < 1 || +this.amount > Number(this.stake);
     },
     gas: {
       get() {
-        if (!this.amount) return null;
+        if (!+this.amount) return null;
         const wei = new BigNumber(this.amount);
         const gas = wei
           .multipliedBy(this.blockGasLimit)
@@ -160,7 +159,7 @@ export default {
   },
   methods: {
     async submit() {
-      if (!this.amount || this.amountHasError) return;
+      if (!+this.amount || this.amountHasError) return;
       this.staking = true;
       try {
         const hash = await this.$store.dispatch(
