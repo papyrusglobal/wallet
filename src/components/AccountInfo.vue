@@ -9,13 +9,13 @@
         {{ balance | toEther }} PPR
       </template>
       <template v-else>
-        {{ balance | formatPrice(10) }} wei
+        {{ balance | formatPrice(10) }} PPR-wei
       </template>
     </span>
     <div class="AccountInfo__stakes">
       <div id="step-3">
         <h5>My stake</h5>
-        {{ stake | formatPrice }} wei
+        {{ stake | formatPrice }} PPR-wei
       </div>
       <div id="step-4">
         <h5>My limit</h5>
@@ -23,7 +23,7 @@
       </div>
       <div id="step-5">
         <h5>All stakes</h5>
-        {{ allStakes | formatPrice }} wei
+        {{ allStakes | formatPrice }} PPR-wei
       </div>
     </div>
   </div>
