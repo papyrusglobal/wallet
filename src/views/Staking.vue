@@ -153,7 +153,7 @@ export default {
         const gas = wei
           .multipliedBy(this.blockGasLimit)
           .multipliedBy(24 * 60 * 60)
-          .dividedBy(new BigNumber(this.allStakes).plus(wei));
+          .dividedBy(wei.plus(this.allStakes || 0));
         return gas.integerValue(BigNumber.ROUND_DOWN).toString();
       }
     }
