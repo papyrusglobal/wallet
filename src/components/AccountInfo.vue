@@ -4,9 +4,16 @@
     <h2 class="AccountInfo__address text-overflow" :title="account">
       {{ account }}
     </h2>
-    <span class="AccountInfo__balance" @click="showEth = !showEth" id="step-2">
+    <span
+      class="AccountInfo__balance"
+      @click="
+        touched = true;
+        showEth = !showEth;
+      "
+      id="step-2"
+    >
       <template v-if="showEth">
-        {{ balance | toEther }} PPR
+        {{ pprBalance }} PPR
       </template>
       <template v-else>
         {{ balance | formatPrice(10) }} wei
@@ -41,8 +48,16 @@ export default {
   components: { Avatar },
   data() {
     return {
-      showEth: false
+      touched: false,
+      showEth: true
     };
+  },
+  watch: {
+    balance() {
+      if (!this.touched && Number(this.pprBalance) < 0.1) {
+        this.showEth = false;
+      }
+    }
   },
   filters: {
     toEther(value) {
@@ -61,7 +76,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['account', 'balance', 'stake', 'limit', 'allStakes'])
+    ...mapState(['account', 'balance', 'stake', 'limit', 'allStakes']),
+    pprBalance() {
+      return this.$options.filters.toEther(this.balance);
+    }
   }
 };
 </script>
