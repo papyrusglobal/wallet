@@ -40,11 +40,15 @@
                 : null
             "
             :disabled="staking"
-            :label="`PPR-wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
+            :label="
+              `${$root.$options.tokens.wei} ${
+                action === 'stake' ? 'at stake' : 'to unstake'
+              }`
+            "
           />
           <Input
             v-tooltip="
-              'gas = PPR-wei * block gas limit * (24 * 60 * 60) / (all stakes + PPR-wei)'
+              `${$root.$options.tokens.gas} = ${$root.$options.tokens.wei} * block gas limit * (24 * 60 * 60) / (all stakes + ${$root.$options.tokens.wei})`
             "
             :value="gas"
             full-width
@@ -52,13 +56,19 @@
             style="flex-basis: 100%; margin-left: 8px;"
             readonly
             :disabled="staking"
-            :label="`Gas you ${action === 'stake' ? 'receive' : 'lose'}`"
+            :label="
+              `${$root.$options.tokens.gas.charAt(0).toUpperCase() +
+                $root.$options.tokens.gas.slice(1)} you ${
+                action === 'stake' ? 'receive' : 'lose'
+              }`
+            "
           />
         </div>
         <SlidingInfo v-if="!!+amount && !amountHasError">
           It will
           <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong>
-          your gas limit at <strong>{{ gas }} gas</strong> per 3 days
+          your gas limit at
+          <strong>{{ gas }} {{ $root.$options.tokens.gas }}</strong> per 3 days
         </SlidingInfo>
       </div>
       <Input

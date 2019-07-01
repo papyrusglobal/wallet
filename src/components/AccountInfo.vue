@@ -13,24 +13,24 @@
       id="step-2"
     >
       <template v-if="showEth">
-        {{ pprBalance }} PPR
+        {{ pprBalance }} {{ $root.$options.tokens.main }}
       </template>
       <template v-else>
-        {{ balance | formatPrice(10) }} PPR-wei
+        {{ balance | formatPrice(10) }} {{ $root.$options.tokens.wei }}
       </template>
     </span>
     <div class="AccountInfo__stakes">
       <div id="step-3">
         <h5>My stake</h5>
-        {{ stake | formatPrice }} PPR-wei
+        {{ stake | formatPrice }} {{ $root.$options.tokens.wei }}
       </div>
       <div id="step-4">
         <h5>My limit</h5>
-        {{ limit | formatPrice }} gas
+        {{ limit | formatPrice }} {{ $root.$options.tokens.gas }}
       </div>
       <div id="step-5">
         <h5>All stakes</h5>
-        {{ allStakes | formatPrice }} PPR-wei
+        {{ allStakes | formatPrice }} {{ $root.$options.tokens.wei }}
       </div>
     </div>
   </div>

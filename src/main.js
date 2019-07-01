@@ -25,6 +25,11 @@ async function startApp() {
   new Vue({
     router,
     store,
+    tokens: {
+      main: process.env.VUE_APP_MAIN_TOKEN,
+      wei: process.env.VUE_APP_WEI_TOKEN,
+      gas: process.env.VUE_APP_GAS_TOKEN
+    },
     render: h => h(App, { props: { hasMetamask } })
   }).$mount('#app');
 
