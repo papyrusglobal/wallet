@@ -1,10 +1,11 @@
 <template>
   <div class="AccountInfo">
     <Avatar :hash="account" colored class="AccountInfo__avatar" />
-    <h2 class="AccountInfo__address text-overflow" :title="account">
+    <h2 class="AccountInfo__address text-overflow">
       {{ account }}
     </h2>
     <span
+      v-tooltip="showEth ? pprBalance : $options.filters.formatNumber(balance)"
       class="AccountInfo__balance"
       @click="
         touched = true;
@@ -20,15 +21,15 @@
       </template>
     </span>
     <div class="AccountInfo__stakes">
-      <div id="step-3">
+      <div id="step-3" v-tooltip="$options.filters.formatNumber(stake)">
         <h5>My stake</h5>
         {{ stake | formatPrice }} {{ $root.$options.tokens.wei }}
       </div>
-      <div id="step-4">
+      <div id="step-4" v-tooltip="$options.filters.formatNumber(limit)">
         <h5>My limit</h5>
         {{ limit | formatPrice }} {{ $root.$options.tokens.gas }}
       </div>
-      <div id="step-5">
+      <div id="step-5" v-tooltip="$options.filters.formatNumber(allStakes)">
         <h5>All stakes</h5>
         {{ allStakes | formatPrice }} {{ $root.$options.tokens.wei }}
       </div>

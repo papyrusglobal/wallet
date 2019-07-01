@@ -22,6 +22,8 @@ async function startApp() {
   Vue.directive('tooltip', VTooltip);
   Vue.use(VueTour);
 
+  Vue.filter('formatNumber', value => Number(value).toLocaleString());
+
   new Vue({
     router,
     store,

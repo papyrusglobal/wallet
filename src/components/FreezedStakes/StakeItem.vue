@@ -2,7 +2,7 @@
   <div class="StakeItem">
     <div>
       <h5>Amount</h5>
-      {{ stake.amount }}
+      {{ stake.amount | formatNumber }}
     </div>
     <div>
       <h5>Time left</h5>
