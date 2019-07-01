@@ -40,11 +40,11 @@
                 : null
             "
             :disabled="staking"
-            :label="`Wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
+            :label="`PPR-wei ${action === 'stake' ? 'at stake' : 'to unstake'}`"
           />
           <Input
             v-tooltip="
-              'gas = wei * block gas limit * (24 * 60 * 60) / (all stakes + wei)'
+              'gas = PPR-wei * block gas limit * (24 * 60 * 60) / (all stakes + PPR-wei)'
             "
             :value="gas"
             full-width
