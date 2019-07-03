@@ -88,7 +88,7 @@
         {{ action }}
       </Button>
     </form>
-    <div>
+    <div v-if="hasFreezedStakes">
       <CardSeparator />
       <FreezedStakes id="step-9" :stakes="freezedStakes" />
     </div>
@@ -251,13 +251,13 @@ export default {
       params: {
         placement: 'top'
       }
-    },
-    {
-      target: '#step-9',
-      content:
-        'When unstaking is done your tokens are frozen and you have to wait for some time to process with withdraw.' +
-        '<div class="mt-2">When withdraw button is available - just push the button and your stakes will be back to your balance!</div>'
     }
+    // {
+    //   target: '#step-9',
+    //   content:
+    //     'When unstaking is done your tokens are frozen and you have to wait for some time to process with withdraw.' +
+    //     '<div class="mt-2">When withdraw button is available - just push the button and your stakes will be back to your balance!</div>'
+    // }
   ]
 };
 </script>
