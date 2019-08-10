@@ -64,9 +64,11 @@ textarea {
   font-size: 1rem;
 }
 
-a {
+a,
+.link {
   color: var(--blue);
   text-decoration: none;
+  cursor: pointer;
 
   &:hover {
     color: var(--blue);
@@ -82,3 +84,4 @@ a {
 
 @import 'tooltip.scss';
 @import 'v-tour.scss';
+@import 'transitions.scss';

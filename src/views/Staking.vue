@@ -31,7 +31,7 @@
             min="0"
             :max="isUnstakeAction ? stake : null"
             style="flex-basis: 100%; margin-right: 8px;"
-            :error="amountHasError"
+            :error="hasAmountError"
             :error-text="
               !!+amount && gas < 1
                 ? `You should ${
@@ -42,7 +42,7 @@
             :disabled="staking"
             :label="
               `${$root.$options.tokens.wei} ${
-                action === 'stake' ? 'at stake' : 'to unstake'
+                !isUnstakeAction ? 'at stake' : 'to unstake'
               }`
             "
           />
@@ -59,30 +59,44 @@
             :label="
               `${$root.$options.tokens.gas.charAt(0).toUpperCase() +
                 $root.$options.tokens.gas.slice(1)} you ${
-                action === 'stake' ? 'receive' : 'lose'
+                !isUnstakeAction ? 'receive' : 'lose'
               }`
             "
           />
         </div>
-        <SlidingInfo v-if="!!+amount && !amountHasError">
+        <SlidingInfo v-if="!!+amount && !hasAmountError">
           It will
-          <strong>{{ action === 'stake' ? 'increase' : 'decrease' }}</strong>
+          <strong>{{ !isUnstakeAction ? 'increase' : 'decrease' }}</strong>
           your gas limit at
           <strong>{{ gas }} {{ $root.$options.tokens.gas }}</strong> per 3 days
         </SlidingInfo>
       </div>
-      <Input
-        full-width
-        id="step-7"
-        type="text"
-        readonly
-        :value="account"
-        class="mb-5"
-        label="To address"
-      />
+      <div style="position: relative">
+        <Input
+          v-model.trim="addressToStake"
+          :value="addressToStake"
+          :error="hasAddressError"
+          :label="`${!isUnstakeAction ? 'To' : 'From'} address`"
+          :disabled="staking"
+          full-width
+          id="step-7"
+          type="text"
+          class="mb-5"
+        />
+        <transition name="fade">
+          <span
+            v-show="!isMyAddress"
+            class="link"
+            style="position: absolute; top: 6px; right: 16px; font-size: 12px;"
+            @click.prevent="addressToStake = account"
+          >
+            {{ !isUnstakeAction ? 'Stake' : 'Unstake' }} to my address
+          </span>
+        </transition>
+      </div>
       <Button
         full-width
-        :disabled="!+amount || amountHasError"
+        :disabled="!+amount || hasAmountError || hasAddressError"
         :loading="staking"
       >
         {{ action }}
@@ -96,6 +110,7 @@
 </template>
 
 <script>
+import { isAddress } from 'web3-utils';
 import { mapState, mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import * as ls from '@/utils/storage';
@@ -122,10 +137,12 @@ export default {
       staking: false,
       action: ['stake', 'unstake'].includes(action) ? action : 'stake',
       amount: !isNaN(parseInt(amount, 10)) ? parseInt(amount, 10) : null,
+      addressToStake: this.account,
       blockGasLimit: 1
     };
   },
   async created() {
+    this.addressToStake = this.account;
     let timeout;
     const loadBlock = async () => {
       this.blockGasLimit = (await this.$service.getLatestBlock()).gasLimit;
@@ -148,7 +165,7 @@ export default {
     isUnstakeAction() {
       return this.action === 'unstake';
     },
-    amountHasError() {
+    hasAmountError() {
       if (!+this.amount) return null;
       if (!this.isUnstakeAction) {
         return this.gas < 1;
@@ -165,17 +182,23 @@ export default {
           .dividedBy(wei.plus(this.allStakes || 0));
         return gas.integerValue(BigNumber.ROUND_DOWN).toString();
       }
+    },
+    hasAddressError() {
+      return !this.addressToStake || !isAddress(this.addressToStake);
+    },
+    isMyAddress() {
+      return !this.hasAddressError && this.addressToStake === this.account;
     }
   },
   methods: {
     async submit() {
-      if (!+this.amount || this.amountHasError) return;
+      if (!+this.amount || this.hasAmountError) return;
       this.staking = true;
       try {
-        const hash = await this.$store.dispatch(
-          this.action,
-          String(this.amount)
-        );
+        const hash = await this.$store.dispatch(this.action, {
+          amount: String(this.amount),
+          address: this.addressToStake
+        });
         this.$toast.info(`Transaction #${hash} is being sent to the network`);
         this.amount = null;
       } catch (err) {

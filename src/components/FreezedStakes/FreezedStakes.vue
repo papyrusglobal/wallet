@@ -11,7 +11,9 @@
         class="mt-3"
       />
     </template>
-    <div class="FreezedStakes__no-unstakes mt-3" v-else>Unstake to withdraw</div>
+    <div v-else class="FreezedStakes__no-unstakes mt-3">
+      Unstake to withdraw
+    </div>
   </div>
 </template>
 

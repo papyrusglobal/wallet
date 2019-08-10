@@ -6,7 +6,8 @@
     </div>
     <div>
       <h5>Time left</h5>
-      {{ timeLeft | millisecondsToWords('ready') }}<br />
+      {{ timeLeft | millisecondsToWords('ready') }}
+      <br />
     </div>
     <div class="FreezedStakes__table-last">
       <Button
@@ -16,9 +17,8 @@
         :loading="withdrawing"
         :disabled="isDisabledWithdraw"
         @click="withdraw"
+        >Withdraw</Button
       >
-        Withdraw
-      </Button>
     </div>
   </div>
 </template>

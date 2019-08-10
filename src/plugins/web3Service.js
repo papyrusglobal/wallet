@@ -88,20 +88,27 @@ export class Web3Service {
     return this.getBalance(process.env.VUE_APP_BIOS_ADDRESS);
   }
 
-  async stake(value, callbacks = {}) {
+  async stake(value, address, callbacks = {}) {
+    let method;
+    if (address !== this.account) {
+      method = this.contract.methods.freezeForContract(address);
+    } else {
+      method = this.contract.methods.freeze();
+    }
     return this.process(
-      this.contract.methods
-        .freeze()
-        .send({ from: this.account, gas: 0, value }),
+      method.send({ from: this.account, gas: 0, value }),
       callbacks
     );
   }
 
-  async unstake(value, callbacks = {}) {
-    return this.process(
-      this.contract.methods.melt(value).send({ from: this.account, gas: 0 }),
-      callbacks
-    );
+  async unstake(value, address, callbacks = {}) {
+    let method;
+    if (address !== this.account) {
+      method = this.contract.methods.meltForContract(address, value);
+    } else {
+      method = this.contract.methods.melt(value);
+    }
+    return this.process(method.send({ from: this.account, gas: 0 }), callbacks);
   }
 
   async withdraw(callbacks = {}) {

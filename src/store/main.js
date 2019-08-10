@@ -144,15 +144,15 @@ export const actions = {
     });
   },
 
-  async stake({ dispatch }, amount) {
-    return this.$service.stake(amount, {
+  async stake({ dispatch }, { amount, address }) {
+    return this.$service.stake(amount, address, {
       onReceipt: onReceipt(dispatch),
       onConfirmation: onConfirmation(dispatch)
     });
   },
 
-  async unstake({ dispatch }, amount) {
-    return this.$service.unstake(amount, {
+  async unstake({ dispatch }, { amount, address }) {
+    return this.$service.unstake(amount, address, {
       onReceipt: onReceipt(dispatch),
       onConfirmation: () => {
         onConfirmation(dispatch)();
