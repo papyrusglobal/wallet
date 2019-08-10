@@ -71,7 +71,7 @@
           <strong>{{ gas }} {{ $root.$options.tokens.gas }}</strong> per 3 days
         </SlidingInfo>
       </div>
-      <div style="position: relative">
+      <div class="relative-container">
         <Input
           v-model.trim="addressToStake"
           :value="addressToStake"
@@ -86,8 +86,7 @@
         <transition name="fade">
           <span
             v-show="!isMyAddress"
-            class="link"
-            style="position: absolute; top: 6px; right: 16px; font-size: 12px;"
+            class="link restore-link"
             @click.prevent="addressToStake = account"
           >
             {{ !isUnstakeAction ? 'Stake' : 'Unstake' }} to my address
@@ -284,3 +283,16 @@ export default {
   ]
 };
 </script>
+
+<style lang="scss" scoped>
+.relative-container {
+  position: relative;
+}
+
+.restore-link {
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  font-size: 12px;
+}
+</style>
