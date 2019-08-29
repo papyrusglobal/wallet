@@ -1,5 +1,5 @@
 # Papyrus Wallet
-Easy stake and unstake!
+The easyest way to stake/unstake tokens is to use Papyrus Wallet. Papyrus Wallet works with MetaMask extension and gives you a particularly user-friendly interface for all features of Papyrus Network.
 
 ### Docker
 #### Lazy
