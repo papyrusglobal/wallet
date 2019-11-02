@@ -24,7 +24,7 @@
         Custom PRC and fill in New RPC URL field with
         <br />
         <span style="background-color: var(--white); padding: 0 4px;"
-          >https://gateway-testnet.papyrus.network</span
+          >https://gateway.papyrus.network</span
         >
       </p>
       <Button slot="action" @click="connectToMetamask" :loading="loading"
