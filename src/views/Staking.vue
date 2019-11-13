@@ -48,7 +48,7 @@
           />
           <Input
             v-tooltip="
-              `${$root.$options.tokens.gas} = ${$root.$options.tokens.wei} * block gas limit * (3 * 24 * 60 * 60) / (all stakes + ${$root.$options.tokens.wei})`
+              `${$root.$options.tokens.gas} = ${$root.$options.tokens.wei} * block gas limit * (60 * 60) / (all stakes + ${$root.$options.tokens.wei})`
             "
             :value="gas"
             full-width
@@ -177,7 +177,7 @@ export default {
         const wei = new BigNumber(this.amount);
         const gas = wei
           .multipliedBy(this.blockGasLimit)
-          .multipliedBy(3 * 24 * 60 * 60)
+          .multipliedBy(60 * 60)
           .dividedBy(wei.plus(this.allStakes || 0));
         return gas.integerValue(BigNumber.ROUND_DOWN).toString();
       }
