@@ -72,7 +72,7 @@ export default {
             trimMantissa: true,
             optionalMantissa: true,
             thousandSeparated: true
-          })
+          }).toUpperCase()
         : 0;
     }
   },
