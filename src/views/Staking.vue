@@ -166,10 +166,10 @@ export default {
     },
     hasAmountError() {
       if (!+this.amount) return null;
-      if (!this.isUnstakeAction) {
-        return this.gas < 1;
+      if (this.isUnstakeAction) {
+        return +this.amount > Number(this.stake);
       }
-      return +this.amount > Number(this.stake);
+      return null;
     },
     gas: {
       get() {
