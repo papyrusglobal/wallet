@@ -169,7 +169,7 @@ export default {
       if (!this.isUnstakeAction) {
         return this.gas < 1;
       }
-      return this.gas < 1 || +this.amount > Number(this.stake);
+      return +this.amount > Number(this.stake);
     },
     gas: {
       get() {
