@@ -68,7 +68,7 @@
           It will
           <strong>{{ !isUnstakeAction ? 'increase' : 'decrease' }}</strong>
           your gas limit at
-          <strong>{{ gas }} {{ $root.$options.tokens.gas }}</strong> per 3 days
+          <strong>{{ gas }} {{ $root.$options.tokens.gas }}</strong> per one hour
         </SlidingInfo>
       </div>
       <div class="relative-container">
@@ -241,7 +241,7 @@ export default {
     {
       target: '#step-4',
       content:
-        'Derivative of your stakes - your GasLimit provided to you for three days',
+        'Derivative of your stakes - your GasLimit provided to you for one hour',
       params: {
         placement: 'top'
       }
@@ -264,12 +264,12 @@ export default {
     {
       target: '#step-7',
       content:
-        'By default - stake will be processed onto your address, function to delegate stakes is in-progress now and will be available soon'
+        'By default - stake will be processed onto your address, to process delegate stake - enter addresser address'
     },
     {
       target: '#step-8',
       content:
-        'You can easily unstake your tokens, just go to the Unstake tab and enter value for unstaking',
+        'You can easily unstake your tokens, just go to the Unstake tab and enter value for unstaking. Unstake will take 3 days',
       params: {
         placement: 'top'
       }
@@ -277,7 +277,7 @@ export default {
     // {
     //   target: '#step-9',
     //   content:
-    //     'When unstaking is done your tokens are frozen and you have to wait for some time to process with withdraw.' +
+    //     'When unstaking is done your tokens are frozen and you have to wait for 3 days to process with withdraw.' +
     //     '<div class="mt-2">When withdraw button is available - just push the button and your stakes will be back to your balance!</div>'
     // }
   ]
