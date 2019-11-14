@@ -32,13 +32,6 @@
             :max="isUnstakeAction ? stake : null"
             style="flex-basis: 100%; margin-right: 8px;"
             :error="hasAmountError"
-            :error-text="
-              !!+amount && gas < 1
-                ? `You should ${
-                    isUnstakeAction ? 'release' : 'get'
-                  } at least 1 gas`
-                : null
-            "
             :disabled="staking"
             :label="
               `${$root.$options.tokens.wei} ${
